@@ -303,7 +303,7 @@ class Bulletin(object):
                     except: err = "+/- %.2f" % m.uncertainty()
                 except ValueError:
                     pass # just don't write any error, that's it
-                except Exception, e:
+                except Exception as e:
                     sys.stderr.write("_writeOriginAutoloc3: caught unknown exception, type='%s', text='%s'\n" % (type(e),str(e)))
             if mag.publicID() == preferredMagnitudeID:
                     preferredMarker = "preferred"
@@ -335,7 +335,7 @@ class Bulletin(object):
                     except: err = "+/- %.2f" % m.uncertainty()
                 except ValueError:
                     pass # just don't write any error, that's it
-                except Exception, e:
+                except Exception as e:
                     sys.stderr.write("_writeOriginAutoloc3: caught unknown exception, type='%s', text='%s'\n" % (type(e),str(e)))
                 preferredMarker = "preferred"
                 if extra:
@@ -702,7 +702,7 @@ class Bulletin(object):
                 seiscomp3.Logging.error("origin '%s' not loaded" % origin)
                 return
         else:
-            raise TypeError, "illegal type for origin"
+            raise TypeError("illegal type for origin")
 
         if self.format == "autoloc1":
             return self._writeOriginAutoloc1(org)
@@ -729,10 +729,10 @@ class Bulletin(object):
                     evt = seiscomp3.DataModel.Event.Cast(evt)
                     self._evt = evt
                 if evt is None:
-                    raise TypeError, "unknown event '" + event + "'"
+                    raise TypeError("unknown event '" + event + "'")
                 return self.writeOrigin(evt.preferredOriginID())
             else:
-                raise TypeError, "illegal type for event"
+                raise TypeError("illegal type for event")
         finally:
             self._evt = None
 
@@ -862,22 +862,22 @@ class BulletinApp(seiscomp3.Client.Application):
                     elif inputFormat == "binary":
                         ar = seiscomp3.IO.BinaryArchive()
                     else:
-                        raise TypeError, "unknown input format '" + inputFormat + "'"
+                        raise TypeError("unknown input format '" + inputFormat + "'")
 
                     if ar.open(inputFile) == False:
-                        raise IOError, inputFile + ": unable to open"
+                        raise IOError(inputFile + ": unable to open")
 
                     obj = ar.readObject()
                     if obj is None:
-                        raise TypeError, inputFile + ": invalid format"
+                        raise TypeError(inputFile + ": invalid format")
 
                     ep = seiscomp3.DataModel.EventParameters.Cast(obj)
                     if ep is None:
-                        raise TypeError, inputFile + ": no eventparameters found"
+                        raise TypeError(inputFile + ": no eventparameters found")
 
                     if ep.eventCount() <= 0:
                         if ep.originCount() <= 0:
-                            raise TypeError, inputFile + ": no origin and no event in eventparameters found"
+                            raise TypeError(inputFile + ": no origin and no event in eventparameters found")
                         else:
                             if self.commandline().hasOption("first-only"):
                                 org = ep.origin(0)
@@ -891,7 +891,7 @@ class BulletinApp(seiscomp3.Client.Application):
                         if self.commandline().hasOption("first-only"):
                             ev = ep.event(0)
                             if ev is None:
-                               raise TypeError, inputFile + ": invalid event"
+                               raise TypeError(inputFile + ": invalid event")
 
                             txt = bulletin.writeEvent(ev)
                         else:
@@ -900,7 +900,7 @@ class BulletinApp(seiscomp3.Client.Application):
                                 ev = ep.event(i)
                                 txt += bulletin.writeEvent(ev)
 
-            except Exception, exc:
+            except Exception as exc:
                 sys.stderr.write("ERROR: " + str(exc) + "\n")
                 return False
 
@@ -915,7 +915,8 @@ class BulletinApp(seiscomp3.Client.Application):
 
 
 def main():
-    app = BulletinApp(len(sys.argv), sys.argv)
+    argv = [ bytes(a.encode()) for a in sys.argv ]
+    app = BulletinApp(len(argv), argv)
     return app()
 
 
