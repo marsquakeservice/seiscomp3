@@ -162,8 +162,8 @@ class SwigPyIterator(_object):
 SwigPyIterator_swigregister = _Geo.SwigPyIterator_swigregister
 SwigPyIterator_swigregister(SwigPyIterator)
 
-import Math
-import Core
+import seiscomp3.Math
+import seiscomp3.Core
 class BBox(_object):
     """Proxy of C++ Seiscomp::Geo::BBox class."""
 
@@ -246,15 +246,15 @@ class Category(_object):
 Category_swigregister = _Geo.Category_swigregister
 Category_swigregister(Category)
 
-class GeoFeature(Core.BaseObject):
+class GeoFeature(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::Geo::GeoFeature class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, GeoFeature, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, GeoFeature, name)
     __repr__ = _swig_repr
@@ -352,15 +352,15 @@ def GeoFeature_area(*args):
     """
     return _Geo.GeoFeature_area(*args)
 
-class GeoFeatureSet(Core.BaseObject):
+class GeoFeatureSet(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::Geo::GeoFeatureSet class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, GeoFeatureSet, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, GeoFeatureSet, name)
     __repr__ = _swig_repr

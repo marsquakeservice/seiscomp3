@@ -166,18 +166,18 @@ class SwigPyIterator(_object):
 SwigPyIterator_swigregister = _DataModel.SwigPyIterator_swigregister
 SwigPyIterator_swigregister(SwigPyIterator)
 
-import IO
-import Math
-import Core
-class NotifierMessageBase(Core.Message):
+import seiscomp3.IO
+import seiscomp3.Math
+import seiscomp3.Core
+class NotifierMessageBase(seiscomp3.Core.Message):
     """Proxy of C++ Seiscomp::Core::GenericMessage<(Seiscomp::DataModel::Notifier)> class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.Message]:
+    for _s in [seiscomp3.Core.Message]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, NotifierMessageBase, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.Message]:
+    for _s in [seiscomp3.Core.Message]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, NotifierMessageBase, name)
     __repr__ = _swig_repr
@@ -247,15 +247,15 @@ class NotifierMessageBase(Core.Message):
 NotifierMessageBase_swigregister = _DataModel.NotifierMessageBase_swigregister
 NotifierMessageBase_swigregister(NotifierMessageBase)
 
-class Observer(Core.BaseObject):
+class Observer(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::Observer class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, Observer, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, Observer, name)
 
@@ -422,15 +422,15 @@ def EOperationNames_name(i):
     """EOperationNames_name(int i) -> char const *"""
     return _DataModel.EOperationNames_name(i)
 
-class Object(Core.BaseObject):
+class Object(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::Object class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, Object, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, Object, name)
 
@@ -812,15 +812,15 @@ def PublicObject_IsRegistrationEnabled():
     """PublicObject_IsRegistrationEnabled() -> bool"""
     return _DataModel.PublicObject_IsRegistrationEnabled()
 
-class DatabaseIterator(Core.BaseObject):
+class DatabaseIterator(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::DatabaseIterator class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, DatabaseIterator, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, DatabaseIterator, name)
     __repr__ = _swig_repr
@@ -1142,15 +1142,15 @@ class CachePopCallback(_object):
 CachePopCallback_swigregister = _DataModel.CachePopCallback_swigregister
 CachePopCallback_swigregister(CachePopCallback)
 
-class PublicObjectCache(Core.BaseObject):
+class PublicObjectCache(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::PublicObjectCache class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, PublicObjectCache, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, PublicObjectCache, name)
 
@@ -1393,15 +1393,15 @@ def NotifierMessage_ConstCast(*args):
     """
     return _DataModel.NotifierMessage_ConstCast(*args)
 
-class Notifier(Core.BaseObject):
+class Notifier(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::Notifier class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, Notifier, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, Notifier, name)
     __repr__ = _swig_repr
@@ -2501,15 +2501,15 @@ def EStationGroupTypeNames_name(i):
     """EStationGroupTypeNames_name(int i) -> char const *"""
     return _DataModel.EStationGroupTypeNames_name(i)
 
-class RealArray(Core.BaseObject):
+class RealArray(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::RealArray class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, RealArray, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, RealArray, name)
     __repr__ = _swig_repr
@@ -2624,15 +2624,15 @@ def RealArray_ConstCast(*args):
     """
     return _DataModel.RealArray_ConstCast(*args)
 
-class TimeArray(Core.BaseObject):
+class TimeArray(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::TimeArray class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, TimeArray, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, TimeArray, name)
     __repr__ = _swig_repr
@@ -2747,15 +2747,15 @@ def TimeArray_ConstCast(*args):
     """
     return _DataModel.TimeArray_ConstCast(*args)
 
-class TimePDF1D(Core.BaseObject):
+class TimePDF1D(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::TimePDF1D class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, TimePDF1D, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, TimePDF1D, name)
     __repr__ = _swig_repr
@@ -2883,15 +2883,15 @@ def TimePDF1D_ConstCast(*args):
     """
     return _DataModel.TimePDF1D_ConstCast(*args)
 
-class TimeQuantity(Core.BaseObject):
+class TimeQuantity(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::TimeQuantity class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, TimeQuantity, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, TimeQuantity, name)
     __repr__ = _swig_repr
@@ -3062,15 +3062,15 @@ def TimeQuantity_ConstCast(*args):
     """
     return _DataModel.TimeQuantity_ConstCast(*args)
 
-class CreationInfo(Core.BaseObject):
+class CreationInfo(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::CreationInfo class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, CreationInfo, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, CreationInfo, name)
     __repr__ = _swig_repr
@@ -3242,15 +3242,15 @@ def CreationInfo_ConstCast(*args):
     """
     return _DataModel.CreationInfo_ConstCast(*args)
 
-class Phase(Core.BaseObject):
+class Phase(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::Phase class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, Phase, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, Phase, name)
     __repr__ = _swig_repr
@@ -3675,15 +3675,15 @@ def Comment_ConstCast(*args):
     """
     return _DataModel.Comment_ConstCast(*args)
 
-class ComplexArray(Core.BaseObject):
+class ComplexArray(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::ComplexArray class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, ComplexArray, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, ComplexArray, name)
     __repr__ = _swig_repr
@@ -3798,15 +3798,15 @@ def ComplexArray_ConstCast(*args):
     """
     return _DataModel.ComplexArray_ConstCast(*args)
 
-class RealPDF1D(Core.BaseObject):
+class RealPDF1D(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::RealPDF1D class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, RealPDF1D, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, RealPDF1D, name)
     __repr__ = _swig_repr
@@ -3934,15 +3934,15 @@ def RealPDF1D_ConstCast(*args):
     """
     return _DataModel.RealPDF1D_ConstCast(*args)
 
-class RealQuantity(Core.BaseObject):
+class RealQuantity(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::RealQuantity class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, RealQuantity, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, RealQuantity, name)
     __repr__ = _swig_repr
@@ -4113,15 +4113,15 @@ def RealQuantity_ConstCast(*args):
     """
     return _DataModel.RealQuantity_ConstCast(*args)
 
-class IntegerQuantity(Core.BaseObject):
+class IntegerQuantity(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::IntegerQuantity class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, IntegerQuantity, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, IntegerQuantity, name)
     __repr__ = _swig_repr
@@ -4278,15 +4278,15 @@ def IntegerQuantity_ConstCast(*args):
     """
     return _DataModel.IntegerQuantity_ConstCast(*args)
 
-class Axis(Core.BaseObject):
+class Axis(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::Axis class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, Axis, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, Axis, name)
     __repr__ = _swig_repr
@@ -4427,15 +4427,15 @@ def Axis_ConstCast(*args):
     """
     return _DataModel.Axis_ConstCast(*args)
 
-class PrincipalAxes(Core.BaseObject):
+class PrincipalAxes(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::PrincipalAxes class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, PrincipalAxes, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, PrincipalAxes, name)
     __repr__ = _swig_repr
@@ -4576,15 +4576,15 @@ def PrincipalAxes_ConstCast(*args):
     """
     return _DataModel.PrincipalAxes_ConstCast(*args)
 
-class Tensor(Core.BaseObject):
+class Tensor(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::Tensor class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, Tensor, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, Tensor, name)
     __repr__ = _swig_repr
@@ -4764,15 +4764,15 @@ def Tensor_ConstCast(*args):
     """
     return _DataModel.Tensor_ConstCast(*args)
 
-class OriginQuality(Core.BaseObject):
+class OriginQuality(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::OriginQuality class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, OriginQuality, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, OriginQuality, name)
     __repr__ = _swig_repr
@@ -4994,15 +4994,15 @@ def OriginQuality_ConstCast(*args):
     """
     return _DataModel.OriginQuality_ConstCast(*args)
 
-class NodalPlane(Core.BaseObject):
+class NodalPlane(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::NodalPlane class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, NodalPlane, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, NodalPlane, name)
     __repr__ = _swig_repr
@@ -5143,15 +5143,15 @@ def NodalPlane_ConstCast(*args):
     """
     return _DataModel.NodalPlane_ConstCast(*args)
 
-class TimeWindow(Core.BaseObject):
+class TimeWindow(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::TimeWindow class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, TimeWindow, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, TimeWindow, name)
     __repr__ = _swig_repr
@@ -5285,15 +5285,15 @@ def TimeWindow_ConstCast(*args):
     """
     return _DataModel.TimeWindow_ConstCast(*args)
 
-class WaveformStreamID(Core.BaseObject):
+class WaveformStreamID(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::WaveformStreamID class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, WaveformStreamID, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, WaveformStreamID, name)
     __repr__ = _swig_repr
@@ -5447,15 +5447,15 @@ def WaveformStreamID_ConstCast(*args):
     """
     return _DataModel.WaveformStreamID_ConstCast(*args)
 
-class SourceTimeFunction(Core.BaseObject):
+class SourceTimeFunction(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::SourceTimeFunction class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, SourceTimeFunction, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, SourceTimeFunction, name)
     __repr__ = _swig_repr
@@ -5597,15 +5597,15 @@ def SourceTimeFunction_ConstCast(*args):
     """
     return _DataModel.SourceTimeFunction_ConstCast(*args)
 
-class NodalPlanes(Core.BaseObject):
+class NodalPlanes(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::NodalPlanes class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, NodalPlanes, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, NodalPlanes, name)
     __repr__ = _swig_repr
@@ -5743,15 +5743,15 @@ def NodalPlanes_ConstCast(*args):
     """
     return _DataModel.NodalPlanes_ConstCast(*args)
 
-class ConfidenceEllipsoid(Core.BaseObject):
+class ConfidenceEllipsoid(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::ConfidenceEllipsoid class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, ConfidenceEllipsoid, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, ConfidenceEllipsoid, name)
     __repr__ = _swig_repr
@@ -5913,15 +5913,15 @@ def ConfidenceEllipsoid_ConstCast(*args):
     """
     return _DataModel.ConfidenceEllipsoid_ConstCast(*args)
 
-class OriginUncertainty(Core.BaseObject):
+class OriginUncertainty(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::OriginUncertainty class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, OriginUncertainty, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, OriginUncertainty, name)
     __repr__ = _swig_repr
@@ -6086,15 +6086,15 @@ def OriginUncertainty_ConstCast(*args):
     """
     return _DataModel.OriginUncertainty_ConstCast(*args)
 
-class Blob(Core.BaseObject):
+class Blob(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::Blob class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, Blob, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, Blob, name)
     __repr__ = _swig_repr
@@ -6206,15 +6206,15 @@ def Blob_ConstCast(*args):
     """
     return _DataModel.Blob_ConstCast(*args)
 
-class ArclinkRequestSummary(Core.BaseObject):
+class ArclinkRequestSummary(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::DataModel::ArclinkRequestSummary class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, ArclinkRequestSummary, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, ArclinkRequestSummary, name)
     __repr__ = _swig_repr
@@ -25736,15 +25736,15 @@ class DatabaseQuery(DatabaseReader):
 DatabaseQuery_swigregister = _DataModel.DatabaseQuery_swigregister
 DatabaseQuery_swigregister(DatabaseQuery)
 
-class InventorySyncMessage(Core.Message):
+class InventorySyncMessage(seiscomp3.Core.Message):
     """Proxy of C++ Seiscomp::DataModel::InventorySyncMessage class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.Message]:
+    for _s in [seiscomp3.Core.Message]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, InventorySyncMessage, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.Message]:
+    for _s in [seiscomp3.Core.Message]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, InventorySyncMessage, name)
     __repr__ = _swig_repr
@@ -25844,15 +25844,15 @@ def InventorySyncMessage_ConstCast(*args):
     """
     return _DataModel.InventorySyncMessage_ConstCast(*args)
 
-class ArtificialOriginMessage(Core.Message):
+class ArtificialOriginMessage(seiscomp3.Core.Message):
     """Proxy of C++ Seiscomp::DataModel::ArtificialOriginMessage class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.Message]:
+    for _s in [seiscomp3.Core.Message]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, ArtificialOriginMessage, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.Message]:
+    for _s in [seiscomp3.Core.Message]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, ArtificialOriginMessage, name)
     __repr__ = _swig_repr

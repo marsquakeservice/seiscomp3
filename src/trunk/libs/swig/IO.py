@@ -328,17 +328,17 @@ class ios(ios_base):
 ios_swigregister = _IO.ios_swigregister
 ios_swigregister(ios)
 
-import Math
-import Core
-class DatabaseInterface(Core.BaseObject):
+import seiscomp3.Math
+import seiscomp3.Core
+class DatabaseInterface(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::IO::DatabaseInterface class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, DatabaseInterface, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, DatabaseInterface, name)
 
@@ -547,15 +547,15 @@ def DatabaseInterface_Open(uri):
     """DatabaseInterface_Open(char const * uri) -> DatabaseInterface"""
     return _IO.DatabaseInterface_Open(uri)
 
-class GFSource(Math.CoordD):
+class GFSource(seiscomp3.Math.CoordD):
     """Proxy of C++ Seiscomp::IO::GFSource class."""
 
     __swig_setmethods__ = {}
-    for _s in [Math.CoordD]:
+    for _s in [seiscomp3.Math.CoordD]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, GFSource, name, value)
     __swig_getmethods__ = {}
-    for _s in [Math.CoordD]:
+    for _s in [seiscomp3.Math.CoordD]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, GFSource, name)
     __repr__ = _swig_repr
@@ -581,15 +581,15 @@ class GFSource(Math.CoordD):
 GFSource_swigregister = _IO.GFSource_swigregister
 GFSource_swigregister(GFSource)
 
-class GFReceiver(Math.CoordD):
+class GFReceiver(seiscomp3.Math.CoordD):
     """Proxy of C++ Seiscomp::IO::GFReceiver class."""
 
     __swig_setmethods__ = {}
-    for _s in [Math.CoordD]:
+    for _s in [seiscomp3.Math.CoordD]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, GFReceiver, name, value)
     __swig_getmethods__ = {}
-    for _s in [Math.CoordD]:
+    for _s in [seiscomp3.Math.CoordD]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, GFReceiver, name)
     __repr__ = _swig_repr
@@ -615,15 +615,15 @@ class GFReceiver(Math.CoordD):
 GFReceiver_swigregister = _IO.GFReceiver_swigregister
 GFReceiver_swigregister(GFReceiver)
 
-class GFArchive(Core.BaseObject):
+class GFArchive(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::IO::GFArchive class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, GFArchive, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, GFArchive, name)
 
@@ -760,15 +760,15 @@ def GFArchive_Open(url):
     """GFArchive_Open(char const * url) -> GFArchive"""
     return _IO.GFArchive_Open(url)
 
-class RecordStream(Core.InterruptibleObject):
+class RecordStream(seiscomp3.Core.InterruptibleObject):
     """Proxy of C++ Seiscomp::IO::RecordStream class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.InterruptibleObject]:
+    for _s in [seiscomp3.Core.InterruptibleObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, RecordStream, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.InterruptibleObject]:
+    for _s in [seiscomp3.Core.InterruptibleObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, RecordStream, name)
 
@@ -969,15 +969,15 @@ class RecordIterator(_object):
 RecordIterator_swigregister = _IO.RecordIterator_swigregister
 RecordIterator_swigregister(RecordIterator)
 
-class RecordInput(Core.BaseObject):
+class RecordInput(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::IO::RecordInput class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, RecordInput, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, RecordInput, name)
     __repr__ = _swig_repr
@@ -1022,15 +1022,15 @@ class RecordInput(Core.BaseObject):
 RecordInput_swigregister = _IO.RecordInput_swigregister
 RecordInput_swigregister(RecordInput)
 
-class RecordFilterInterface(Core.BaseObject):
+class RecordFilterInterface(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::IO::RecordFilterInterface class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, RecordFilterInterface, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, RecordFilterInterface, name)
 
@@ -1143,15 +1143,15 @@ class RecordResamplerBase(RecordFilterInterface):
 RecordResamplerBase_swigregister = _IO.RecordResamplerBase_swigregister
 RecordResamplerBase_swigregister(RecordResamplerBase)
 
-class RecordStreamException(Core.StreamException):
+class RecordStreamException(seiscomp3.Core.StreamException):
     """Proxy of C++ Seiscomp::IO::RecordStreamException class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.StreamException]:
+    for _s in [seiscomp3.Core.StreamException]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, RecordStreamException, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.StreamException]:
+    for _s in [seiscomp3.Core.StreamException]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, RecordStreamException, name)
     __repr__ = _swig_repr
@@ -1199,15 +1199,15 @@ class RecordStreamTimeout(RecordStreamException):
 RecordStreamTimeout_swigregister = _IO.RecordStreamTimeout_swigregister
 RecordStreamTimeout_swigregister(RecordStreamTimeout)
 
-class Importer(Core.BaseObject):
+class Importer(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::IO::Importer class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, Importer, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, Importer, name)
 
@@ -1338,15 +1338,15 @@ class ExportSink(_object):
 ExportSink_swigregister = _IO.ExportSink_swigregister
 ExportSink_swigregister(ExportSink)
 
-class Exporter(Core.BaseObject):
+class Exporter(seiscomp3.Core.BaseObject):
     """Proxy of C++ Seiscomp::IO::Exporter class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, Exporter, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.BaseObject]:
+    for _s in [seiscomp3.Core.BaseObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, Exporter, name)
 
@@ -1449,15 +1449,15 @@ def Exporter_Create(type):
     """Exporter_Create(char const * type) -> Exporter"""
     return _IO.Exporter_Create(type)
 
-class XMLArchive(Core.GenericArchive):
+class XMLArchive(seiscomp3.Core.GenericArchive):
     """Proxy of C++ Seiscomp::IO::XMLArchive class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.GenericArchive]:
+    for _s in [seiscomp3.Core.GenericArchive]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, XMLArchive, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.GenericArchive]:
+    for _s in [seiscomp3.Core.GenericArchive]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, XMLArchive, name)
     __repr__ = _swig_repr
@@ -1585,15 +1585,15 @@ class XMLArchive(Core.GenericArchive):
 XMLArchive_swigregister = _IO.XMLArchive_swigregister
 XMLArchive_swigregister(XMLArchive)
 
-class BinaryArchive(Core.GenericArchive):
+class BinaryArchive(seiscomp3.Core.GenericArchive):
     """Proxy of C++ Seiscomp::IO::BinaryArchive class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.GenericArchive]:
+    for _s in [seiscomp3.Core.GenericArchive]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, BinaryArchive, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.GenericArchive]:
+    for _s in [seiscomp3.Core.GenericArchive]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, BinaryArchive, name)
     __repr__ = _swig_repr
@@ -1748,15 +1748,15 @@ AH_DATATYPE_COMPLEX = _IO.AH_DATATYPE_COMPLEX
 AH_DATATYPE_VECTOR = _IO.AH_DATATYPE_VECTOR
 AH_DATATYPE_TENSOR = _IO.AH_DATATYPE_TENSOR
 AH_DATATYPE_DOUBLE = _IO.AH_DATATYPE_DOUBLE
-class AHRecord(Core.Record):
+class AHRecord(seiscomp3.Core.Record):
     """Proxy of C++ Seiscomp::IO::AHRecord class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.Record]:
+    for _s in [seiscomp3.Core.Record]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, AHRecord, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.Record]:
+    for _s in [seiscomp3.Core.Record]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, AHRecord, name)
     __repr__ = _swig_repr
@@ -2019,15 +2019,15 @@ def read_one(arg1):
 def write_one(rec, os):
     """write_one(AHRecord rec, std::ostream & os) -> bool"""
     return _IO.write_one(rec, os)
-class LibmseedException(Core.StreamException):
+class LibmseedException(seiscomp3.Core.StreamException):
     """Proxy of C++ Seiscomp::IO::LibmseedException class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.StreamException]:
+    for _s in [seiscomp3.Core.StreamException]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, LibmseedException, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.StreamException]:
+    for _s in [seiscomp3.Core.StreamException]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, LibmseedException, name)
     __repr__ = _swig_repr
@@ -2047,15 +2047,15 @@ class LibmseedException(Core.StreamException):
 LibmseedException_swigregister = _IO.LibmseedException_swigregister
 LibmseedException_swigregister(LibmseedException)
 
-class MSeedRecord(Core.Record):
+class MSeedRecord(seiscomp3.Core.Record):
     """Proxy of C++ Seiscomp::IO::MSeedRecord class."""
 
     __swig_setmethods__ = {}
-    for _s in [Core.Record]:
+    for _s in [seiscomp3.Core.Record]:
         __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, MSeedRecord, name, value)
     __swig_getmethods__ = {}
-    for _s in [Core.Record]:
+    for _s in [seiscomp3.Core.Record]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, MSeedRecord, name)
     __repr__ = _swig_repr

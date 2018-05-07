@@ -10,7 +10,7 @@
  *   SeisComP Public License for more details.                             *
  ***************************************************************************/
 
-%module Utils
+%module(package="seiscomp3") Utils
 
 %{
 #include "seiscomp3/utils/files.h"
