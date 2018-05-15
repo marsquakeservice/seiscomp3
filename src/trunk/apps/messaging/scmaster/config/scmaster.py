@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os, sys, time, subprocess, seiscomp3.Kernel
 
 
@@ -98,14 +99,14 @@ class Module(seiscomp3.Kernel.CoreModule):
 
 	def start(self):
 		if not self.messaging:
-			print "[kernel] %s is disabled by config" % self.name
+			print("[kernel] %s is disabled by config" % self.name)
 			return 0
 
 		seiscomp3.Kernel.CoreModule.start(self)
 
 	def check(self):
 		if not self.messaging:
-			print "[kernel] %s is disabled by config" % self.name
+			print("[kernel] %s is disabled by config" % self.name)
 			return 0
 
 		return seiscomp3.Kernel.CoreModule.check(self)
@@ -224,12 +225,12 @@ class Module(seiscomp3.Kernel.CoreModule):
 		try:
 			backend = cfg.getString("plugins.dbPlugin.dbDriver")
 		except:
-			print >> sys.stderr, "WARNING: DB plugin activated but no backend configured"
+			print("WARNING: DB plugin activated but no backend configured", file=sys.stderr)
 			return 0
 
 		if backend != "mysql" and backend != "postgresql":
-			print >> sys.stderr, "WARNING: Only MySQL and PostgreSQL migrations are supported right now. Please check and "\
-			                     "upgrade the database schema version yourselves."
+			print("WARNING: Only MySQL and PostgreSQL migrations are supported right now. Please check and "\
+			                     "upgrade the database schema version yourselves.", file=sys.stderr)
 			return 0
 
 		sys.stderr.write("  * check database write access ... ")
@@ -239,8 +240,8 @@ class Module(seiscomp3.Kernel.CoreModule):
 		try:
 			params = cfg.getString("plugins.dbPlugin.writeConnection")
 		except:
-			print >> sys.stderr, "failed"
-			print >> sys.stderr, "WARNING: DB plugin activated but not writeConnection configured"
+			print("failed", file=sys.stderr)
+			print("WARNING: DB plugin activated but not writeConnection configured", file=sys.stderr)
 			return 0
 
 		user = 'sysop'
@@ -260,8 +261,8 @@ class Module(seiscomp3.Kernel.CoreModule):
 				user = tmp[0]
 				pwd = tmp[1]
 			else:
-				print >> sys.stderr, "failed"
-				print >> sys.stderr, "WARNING: Invalid scmaster.cfg:plugins.dbPlugin.writeConnection, cannot check schema version"
+				print("failed", file=sys.stderr)
+				print("WARNING: Invalid scmaster.cfg:plugins.dbPlugin.writeConnection, cannot check schema version", file=sys.stderr)
 				return 0
 
 		tmp = params.split('/')
@@ -286,20 +287,20 @@ class Module(seiscomp3.Kernel.CoreModule):
 
 		out = check_output(cmd)
 		if out[2] != 0:
-			print >> sys.stderr, "failed"
-			print >> sys.stderr, "WARNING: mysql returned with error:"
-			print >> sys.stderr, out[1].strip()
+			print("failed", file=sys.stderr)
+			print("WARNING: mysql returned with error:", file=sys.stderr)
+			print(out[1].strip(), file=sys.stderr)
 			return 0
 
-		print >> sys.stderr, "OK"
+		print("OK", file=sys.stderr)
 
 		version = out[0].strip()
-		print >> sys.stderr, "  * database schema version is %s" % version
+		print("  * database schema version is %s" % version, file=sys.stderr)
 
 		try:
 			vmaj, vmin = [int(t) for t in version.split('.')]
 		except:
-			print >> sys.stderr, "WARNING: wrong version format: expected MAJOR.MINOR"
+			print("WARNING: wrong version format: expected MAJOR.MINOR", file=sys.stderr)
 			return 0
 
 		strictVersionCheck = True
@@ -309,7 +310,7 @@ class Module(seiscomp3.Kernel.CoreModule):
 			pass
 
 		if not strictVersionCheck:
-			print >> sys.stderr, "  * database version check is disabled"
+			print("  * database version check is disabled", file=sys.stderr)
 			return 0
 
 		migrations = os.path.join(schemapath, "migrations", backend)
@@ -343,21 +344,21 @@ class Module(seiscomp3.Kernel.CoreModule):
 					vcurrmaj = vtomaj
 					vcurrmin = vtomin
 
-		print >> sys.stderr, "  * last migration version is %d.%d" % (vcurrmaj, vcurrmin)
+		print("  * last migration version is %d.%d" % (vcurrmaj, vcurrmin), file=sys.stderr)
 
 		if vcurrmaj == vmaj and vcurrmin == vmin:
-			print >> sys.stderr, "  * schema up-to-date"
+			print("  * schema up-to-date", file=sys.stderr)
 			return 0
 
 		if not migration_paths.has_key((vmaj, vmin)):
-			print >> sys.stderr, "  * no migrations found"
+			print("  * no migrations found", file=sys.stderr)
 			return 0
 
-		print >> sys.stderr, "  * migration to the current version is required. apply the following"
-		print >> sys.stderr, "    scripts in exactly the given order:"
+		print("  * migration to the current version is required. apply the following", file=sys.stderr)
+		print("    scripts in exactly the given order:", file=sys.stderr)
 		while migration_paths.has_key((vmaj,vmin)):
 			(vtomaj, vtomin) = migration_paths[(vmaj, vmin)]
-			print >> sys.stderr, "    * %s" % os.path.join(migrations, "%d_%d_to_%d_%d.sql" % (vmaj, vmin, vtomaj, vtomin))
+			print("    * %s" % os.path.join(migrations, "%d_%d_to_%d_%d.sql" % (vmaj, vmin, vtomaj, vtomin)), file=sys.stderr)
 			(vmaj, vmin) = (vtomaj, vtomin)
 
 		return 1

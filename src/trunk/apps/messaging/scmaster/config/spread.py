@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os, time, seiscomp3.Kernel
 
 
@@ -37,7 +38,7 @@ class Module(seiscomp3.Kernel.CoreModule):
 
   def start(self):
     if not self.messaging:
-      print "[kernel] %s is disabled by config" % self.name
+      print("[kernel] %s is disabled by config" % self.name)
       return 0
 
     return seiscomp3.Kernel.CoreModule.start(self)
@@ -49,7 +50,7 @@ class Module(seiscomp3.Kernel.CoreModule):
 
   def check(self):
     if not self.messaging:
-      print "[kernel] %s is disabled by config" % self.name
+      print("[kernel] %s is disabled by config" % self.name)
       return 0
 
     return seiscomp3.Kernel.CoreModule.check(self)
@@ -61,9 +62,9 @@ class Module(seiscomp3.Kernel.CoreModule):
     # Create config directory in var/lib/spread
     if not os.path.exists(spread_conf_dir):
       try: os.makedirs(spread_conf_dir)
-      except Exception, e:
+      except Exception as e:
         if not self.suppressOutput:
-          print "%s: %s" % (spread_conf_dir, str(e))
+          print("%s: %s" % (spread_conf_dir, str(e)))
         return 1
 
     spread_conf = os.path.join(spread_conf_dir, "spread.conf")
@@ -75,18 +76,18 @@ class Module(seiscomp3.Kernel.CoreModule):
     content = self.env.processTemplate("spread.conf.tpl", tp, params, True)
     if content:
       if not self.suppressOutput:
-        print "using configuration template in %s" % self.env.last_template_file
+        print("using configuration template in %s" % self.env.last_template_file)
       try: cfg = open(spread_conf, 'w')
       except:
         if not self.suppressOutput:
-            print "%s: failed to write: abort" % os.path.abspath(spread_conf)
+            print("%s: failed to write: abort" % os.path.abspath(spread_conf))
         return 1
 
       cfg.write(self.env.processTemplate("spread.conf.tpl", tp, params, True))
       cfg.close()
     else:
       if not self.suppressOutput:
-        print "WARNING: no configuration template found -> empty configuration"
+        print("WARNING: no configuration template found -> empty configuration")
       try: os.remove(spread_conf)
       except: pass
 

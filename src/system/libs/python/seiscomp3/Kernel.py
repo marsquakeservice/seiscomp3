@@ -10,6 +10,7 @@
 #    SeisComP Public License for more details.                             #
 ############################################################################
 
+from __future__ import print_function
 import os, sys, time, string, subprocess, seiscomp3.Config
 
 
@@ -98,13 +99,13 @@ class Environment(seiscomp3.Config.Config):
   def enableModule(self, name):
     runFile = os.path.join(self.root, "etc", "init", name + ".auto")
     if os.path.exists(runFile):
-      print "%s is already enabled" % name
+      print("%s is already enabled" % name)
       return 0
     try:
       open(runFile, 'w').close()
-      print "enabled %s" % name
+      print("enabled %s" % name)
       return 0
-    except Exception, exc:
+    except Exception as exc:
       sys.stderr.write(str(exc) + "\n")
       sys.stderr.flush()
     return 0
@@ -112,12 +113,12 @@ class Environment(seiscomp3.Config.Config):
   def disableModule(self, name):
     runFile = os.path.join(self.root, "etc", "init", name + ".auto")
     if not os.path.exists(runFile):
-      print "%s is not enabled" % name
+      print("%s is not enabled" % name)
       return 0
     try:
       os.remove(runFile)
-      print "disabled %s" % name
-    except Exception, exc:
+      print("disabled %s" % name)
+    except Exception as exc:
       sys.stderr.write(str(exc) + "\n")
       sys.stderr.flush()
     return 0
@@ -174,7 +175,7 @@ class Environment(seiscomp3.Config.Config):
     # Kill process with pid
     subprocess.call("kill %d" % pid, shell=True)
     if subprocess.call("waitlock %d \"%s\"" % (timeout, lockfile), shell=True) != 0:
-      print "timeout exceeded"
+      print("timeout exceeded")
       subprocess.call("kill -9 %d" % pid, shell=True)
 
     # Remove pid file
@@ -193,7 +194,7 @@ class Environment(seiscomp3.Config.Config):
 
     else:
       if printError:
-        print "Error: template %s not found" % (templateFile)
+        print("Error: template %s not found" % (templateFile))
       return ""
 
     filename = os.path.join(tp, templateFile)
@@ -202,7 +203,7 @@ class Environment(seiscomp3.Config.Config):
     try: t = Template(open(filename).read())
     except:
       if printError:
-        print "Error: template %s not readable" % filename
+        print("Error: template %s not readable" % filename)
       return ""
 
     params['date'] = time.ctime()
@@ -212,12 +213,12 @@ class Environment(seiscomp3.Config.Config):
       try:
         return t.substitute(params)
 
-      except KeyError, e:
-        print "warning: $%s is not defined in %s" % (e.args[0], filename)
-        params[e.args[0]] = ""
+      except KeyError as exc:
+        print("warning: $%s is not defined in %s" % (exc.args[0], filename))
+        params[exc.args[0]] = ""
 
-      except ValueError, e:
-        raise ValueError, "%s: %s" % (filename, str(e))
+      except ValueError as exc:
+        raise ValueError("%s: %s" % (filename, str(exc)))
 
 
   def logStatus(self, name, isRunning, shouldRun, isEnabled):
