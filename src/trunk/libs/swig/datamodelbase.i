@@ -130,6 +130,8 @@ namespace std {
 
 		    self.step()
 		    return o
+
+		__next__ = next   # for Python 3 compatibility
 	%}
 };
 

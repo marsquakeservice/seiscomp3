@@ -207,6 +207,8 @@ enum(Seiscomp::Core::GreensFunctionComponent);
 			
 			self.step()
 			return o
+
+		__next__ = next   # for Python 3 compatibility
 	%}
 };
 
