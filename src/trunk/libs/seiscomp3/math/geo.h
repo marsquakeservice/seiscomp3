@@ -90,7 +90,8 @@ SC_SYSTEM_CORE_API
 int scdraw(double lat0, double lon0, double radius,
 	   int n, double *lat, double *lon);
 
-#define KM_OF_DEGREE 111.1329149013519096
+/* Mars (mean radius: 3389.5 km) */
+#define KM_OF_DEGREE 59.1579349963
 
 template<typename T>
 T deg2km(T deg) { return deg * (T)KM_OF_DEGREE; }

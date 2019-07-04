@@ -18,9 +18,20 @@
 #include <seiscomp3/math/geo.h>
 #include <seiscomp3/math/math.h>
 
-#define WGS84_SEMI_MAJOR_AXIS 6378137.0
-#define WGS84_FLATTENING (1.0/298.2572235630)
+/*
+Seidelmann, P. Kenneth; Archinal, B. A.; A'hearn, M. F. et al. (2007). "Report
+of the IAU/IAG Working Group on cartographic coordinates and rotational
+elements: 2006". Celestial Mechanics and Dynamical Astronomy 98 (3): 155–180.
+Bibcode:2007CeMDA..98..155S. doi:10.1007/s10569-007-9072-y.
 
+Equatorial radius: 3396.2 ± 0.1 km
+Polar radius: 3376.2 ± 0.1 km
+Mean radius: 3389.5 ± 0.2 km
+Flattening: 0.00589 ± 0.00015
+*/
+
+#define WGS84_SEMI_MAJOR_AXIS 3396200.0
+#define WGS84_FLATTENING (1.0/169.779286927)
 
 namespace Seiscomp
 {
