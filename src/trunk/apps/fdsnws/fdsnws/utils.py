@@ -97,6 +97,18 @@ class Sink(ExportSink):
 		self.written += size
 		return size
 
+# for Mars-modified fdsnws-event (feuchner, 2019-05-14)
+class StringSink(ExportSink):
+        def __init__(self, request):
+                ExportSink.__init__(self)
+                self.request = request
+                self.written = 0
+                self.out = ''
+
+        def write(self, data, size):
+                self.out += str(data[:size])
+                self.written += size
+                return size
 
 ################################################################################
 class AccessLogEntry:

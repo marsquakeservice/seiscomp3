@@ -26,7 +26,7 @@
 #define NS_QML_RT        "http://quakeml.org/xmlns/quakeml-rt/1.2"
 #define NS_QML_BED       "http://quakeml.org/xmlns/bed/1.2"
 #define NS_QML_BED_RT    "http://quakeml.org/xmlns/bed-rt/1.2"
-#define RES_REF_PREFIX   "smi:org.gfz-potsdam.de/geofon/"
+#define RES_REF_PREFIX   "smi:insight.mqs/"
 
 using namespace Seiscomp::DataModel;
 
