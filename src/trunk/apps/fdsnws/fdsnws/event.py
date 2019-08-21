@@ -48,10 +48,10 @@ VERSION = "1.2.2"
 class _EventRequestOptions(RequestOptions):
 
     Exporters = {'xml': 'qml1.2',
-                 'qml': 'qml1.2',
-                 'qml-rt': 'qml1.2rt',
-                 'sc3ml': 'trunk',
-                 'csv': 'csv'}
+        	 'qml': 'qml1.2',
+        	 'qml-rt': 'qml1.2rt',
+        	 'sc3ml': 'trunk',
+        	 'csv': 'csv'}
     VText = ['text']
     VOrderBy = ['time', 'time-asc', 'magnitude', 'magnitude-asc']
     OutputFormats = Exporters.keys() + VText
@@ -84,6 +84,10 @@ class _EventRequestOptions(RequestOptions):
     PStaMTs = ['includestationmts', 'stationmts', 'stamts']
     PComments = ['includecomments', 'comments']
     PFormatted = ['formatted']
+
+    # for SingleStation and Marsquake data model
+    PMars          = [ 'includemars', 'mars' ]
+    PConfirmed     = [ 'confirmed' ]
 
     # SC3 knows more event types than QuakeML. Types unknown to QuakeML are
     # mapped during the SC3 to QuakeML conversion. Since the FDNSWS standard
@@ -147,6 +151,8 @@ class _EventRequestOptions(RequestOptions):
         self.fm = None
         self.allFMs = None
         self.staMTs = None
+        self.mars         = None
+        self.confirmed    = None
 
     #---------------------------------------------------------------------------
     def parse(self):
@@ -206,6 +212,9 @@ class _EventRequestOptions(RequestOptions):
         self.allFMs = self.parseBool(self.PAllFMs)
         self.staMTs = self.parseBool(self.PStaMTs)
         self.comments = self.parseBool(self.PComments)
+        self.mars       = self.parseBool(self.PMars)
+        self.confirmed  = self.parseBool(self.PConfirmed)
+
 
         # limit, offset, orderBy, updatedAfter
         self.limit = self.parseInt(self.PLimit, 1, DBMaxUInt)
@@ -349,6 +358,12 @@ class FDSNEvent(BaseResource):
         pickIDs = set()
         if ro.picks is None:
             ro.picks = True
+
+        if ro.mars is None:
+            ro.mars = False
+
+        if ro.confirmed is None:
+            ro.confirmed = False
 
         # add related information
         for iEvent in xrange(ep.eventCount()):
@@ -544,9 +559,17 @@ class FDSNEvent(BaseResource):
                     return False
 
         # write response
-        sink = utils.Sink(req)
-        if not exp.write(sink, ep):
+        sink = utils.StringSink(req)
+        status = exp.write(sink, ep)
+
+        if not status:
             return False
+
+        utils.writeTS(
+            req, marsutils.extend_quakeml_for_mars(
+                Application.Instance().databaseURI(), sink.out,
+                full_mars_datamodel=ro.mars, only_confirmed=ro.confirmed))
+
         Logging.debug("%s: returned %i events and %i origins (total "
                       "objects/bytes: %i/%i)" % (ro.service, ep.eventCount(),
                                                  ep.originCount(), objCount, sink.written))
