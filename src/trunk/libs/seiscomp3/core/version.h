@@ -23,12 +23,12 @@ namespace Seiscomp {
 namespace Core {
 
 
-/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(12, 2, 0)) */
+/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(13, 0, 0)) */
 #define SC_API_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
 
 
 /* SC_API_VERSION is (major << 16) + (minor << 8) + patch. */
-#define SC_API_VERSION 0x0C0200
+#define SC_API_VERSION 0x0D0000
 
 #define SC_API_VERSION_MAJOR(v) (v >> 16)
 #define SC_API_VERSION_MINOR(v) ((v >> 8) & 0xff)
@@ -38,6 +38,9 @@ namespace Core {
 /******************************************************************************
  API Changelog
  ******************************************************************************
+ "13.0.0"   0x0D0000
+   - Added virtual Seiscomp::IO::Database::escape
+
  "12.2.0"   0x0C0200
    - Added ArtificialEventParametersMessage
 
@@ -113,6 +116,8 @@ namespace Core {
    - Changed Seiscomp::Gui::Map::Canvas::menu parent parameter type from QWidget to QMenu
    - Changed Seiscomp::Gui::Map::Layer::menu parent parameter type from QWidget to QMenu
    - Removed Seiscomp::Gui::Map::Layer RTTI interface
+   - Added Seiscomp::Gui::Map::Layer::show
+   - Added Seiscomp::Gui::Map::Layer::hide
    - Added Seiscomp::Gui::Map::Layer::baseBufferUpdated
    - Added Seiscomp::Gui::Map::Layer::size
    - Added Seiscomp::Gui::Map::Layer::isInside
