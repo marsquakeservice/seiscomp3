@@ -6,6 +6,7 @@
   <title>SeisComP3 FDSNWS - Station</title>
 </head>
 <body>
+  <p><a href="../">Parent Directory</a></p>
   <h1>SeisComP3 FDSNWS Station Web Service</h1>
   <p>The station Web service provides access to network, station, channel and
   response metadata in <a href="http://www.fdsn.org/xml/station">FDSN Station
@@ -26,6 +27,8 @@
   <h2>Feature Notes</h2>
   <ul>
     <li>back-end software: <a href="http://www.seiscomp3.org">SeisComP3</a></li>
+    <li><em>matchtimeseries</em> request parameter only available if
+      dataavailability information is enabled via configuration</li>
     <li><em>updatedafter</em> request parameter not implemented: The last
       modification time in SeisComP is tracked on the object level. If a child
       of an object is updated the update time is not propagated to all parents.

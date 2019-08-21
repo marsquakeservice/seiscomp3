@@ -103,6 +103,11 @@
 				Path to access log file. If unset no access log is created.
 				</description>
 			</parameter>
+			<parameter name="requestLog" type="string">
+				<description>
+				Path to request log file. If unset no request log is created.
+				</description>
+			</parameter>
 			<parameter name="allowRestricted" type="boolean" default="true">
 				<description>
 				Enables/disables access to restricted inventory data.
@@ -189,7 +194,7 @@
 				information may be collected by scardac (SeisComP archive
 				data availability collector).
 				</description>
-				<parameter name="enable" type="boolean" default="true">
+				<parameter name="enable" type="boolean" default="false">
 					<description>
 					Enable loading of data availabilty information from
 					SeisComP3 database. Availability information is used by
