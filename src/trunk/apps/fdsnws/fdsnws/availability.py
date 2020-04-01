@@ -12,20 +12,25 @@
 # Email:   herrnkind@gempa.de
 ###############################################################################
 
+from __future__ import absolute_import, division, print_function
+from functools import cmp_to_key
+
+from collections import OrderedDict
+
 from twisted.cred import portal
 from twisted.internet.threads import deferToThread
 from twisted.web import http, resource, server
 
-from zope.interface import implements
+from zope.interface import implementer
 
 from seiscomp3 import DataModel, IO, Logging
 from seiscomp3.Client import Application
 from seiscomp3.Core import Time
 
-from http import BaseResource
-from request import RequestOptions
+from .http import BaseResource
+from .request import RequestOptions
 
-import utils
+from . import utils
 
 
 DBMaxUInt = 18446744073709551615  # 2^64 - 1
@@ -108,7 +113,7 @@ class _AvailabilityRequestOptions(RequestOptions):
         # merge (optional)
         for v in self.getListValues(self.PMerge, True):
             if v not in self.VMerge:
-                self.raiseValueError(v)
+                self.raiseValueError(self.PMerge[0])
 
             if v == self.VMergeSampleRate:
                 self.mergeSampleRate = True
@@ -189,7 +194,7 @@ class _AvailabilityExtentRequestOptions(_AvailabilityRequestOptions):
     #--------------------------------------------------------------------------
     def attributeExtentIter(self, ext):
 
-        for i in xrange(ext.dataAttributeExtentCount()):
+        for i in range(ext.dataAttributeExtentCount()):
             e = ext.dataAttributeExtent(i)
 
             if self.time and not self.time.match(e.start(), e.end()):
@@ -225,6 +230,7 @@ class _AvailabilityQueryRequestOptions(_AvailabilityRequestOptions):
         _AvailabilityRequestOptions.__init__(self, args)
         self.service = 'availability-query'
 
+        self.orderBy = None
         self.mergeGaps = None
         self.excludeTooLarge = None
 
@@ -247,6 +253,13 @@ class _AvailabilityQueryRequestOptions(_AvailabilityRequestOptions):
         if self.excludeTooLarge is None:
             self.excludeTooLarge = True
 
+        if not self.channel:
+            raise ValueError('Request contains no selections')
+
+        if self.orderBy:
+            raise ValueError("orderby not supported for query request")
+
+
 
 ###############################################################################
 class _Availability(BaseResource):
@@ -261,7 +274,6 @@ class _Availability(BaseResource):
 
     #--------------------------------------------------------------------------
     def render_OPTIONS(self, req):
-        req.setHeader('Access-Control-Allow-Origin', '*')
         req.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         req.setHeader('Access-Control-Allow-Headers',
                       'Accept, Content-Type, X-Requested-With, Origin')
@@ -275,12 +287,10 @@ class _Availability(BaseResource):
         ro = self._createRequestOptions(req.args)
         try:
             ro.parse()
-            if not ro.channel:
-                raise ValueError, 'Request contains no selections'
 
             # the GET operation supports exactly one stream filter
             ro.streams.append(ro)
-        except ValueError, e:
+        except ValueError as e:
             Logging.warning(str(e))
             return self.renderErrorPage(req, http.BAD_REQUEST, str(e), ro)
 
@@ -294,7 +304,7 @@ class _Availability(BaseResource):
         try:
             ro.parsePOST(req.content)
             ro.parse()
-        except ValueError, e:
+        except ValueError as e:
             Logging.warning(str(e))
             return self.renderErrorPage(req, http.BAD_REQUEST, str(e), ro)
 
@@ -349,7 +359,7 @@ class _Availability(BaseResource):
         elif ro.format == ro.VFormatRequest:
             return self._writeFormatRequest(req, lines, ro)
 
-        raise Exception, "unknown reponse format: %s" % ro.format
+        raise Exception("unknown reponse format: %s" % ro.format)
 
 
     #--------------------------------------------------------------------------
@@ -536,8 +546,8 @@ class _Availability(BaseResource):
 
 
 ###############################################################################
+@implementer(portal.IRealm)
 class FDSNAvailabilityExtentRealm(object):
-    implements(portal.IRealm)
 
     #--------------------------------------------------------------------------
     def __init__(self, access):
@@ -555,8 +565,8 @@ class FDSNAvailabilityExtentRealm(object):
 
 
 ###############################################################################
+@implementer(portal.IRealm)
 class FDSNAvailabilityExtentAuthRealm(object):
-    implements(portal.IRealm)
 
     #--------------------------------------------------------------------------
     def __init__(self, access, userdb):
@@ -696,8 +706,8 @@ class FDSNAvailabilityExtent(_Availability):
                         eDict[e.sampleRate()].append(e)
                     else:
                         eDict[e.sampleRate()] = [e]
-                for eList in eDict.itervalues():
-                    e = self._mergeExtents(eList)
+                for k, v in eDict.items():
+                    e = self._mergeExtents(v)
                     lines.append((ext, e, restricted))
             else:
                 eDict = {}  # key=quality
@@ -706,16 +716,14 @@ class FDSNAvailabilityExtent(_Availability):
                         eDict[e.quality()].append(e)
                     else:
                         eDict[e.quality()] = [e]
-                for eList in eDict.itervalues():
-                    e = self._mergeExtents(eList)
+                for k, v in eDict.items():
+                    e = self._mergeExtents(v)
                     lines.append((ext, e, restricted))
 
         # Return 204 if no matching availability information was found
         if len(lines) == 0:
             msg = "no matching availabilty information found"
-            data = self.renderErrorPage(req, http.NO_CONTENT, msg, ro)
-            if data:
-                utils.writeTS(req, data)
+            self.writeErrorPage(req, http.NO_CONTENT, msg, ro)
             return True
 
         # sort lines
@@ -804,12 +812,12 @@ class FDSNAvailabilityExtent(_Availability):
             compareCountDesc if ro.orderBy == ro.VOrderByCountDesc else \
             compareUpdate if ro.orderBy == ro.VOrderByUpdate else \
             compareUpdateDesc
-        lines.sort(cmp=comparator)
+        lines.sort(key=cmp_to_key(comparator))
 
 
 ###############################################################################
+@implementer(portal.IRealm)
 class FDSNAvailabilityQueryRealm(object):
-    implements(portal.IRealm)
 
     #--------------------------------------------------------------------------
     def __init__(self, access):
@@ -827,8 +835,8 @@ class FDSNAvailabilityQueryRealm(object):
 
 
 ###############################################################################
+@implementer(portal.IRealm)
 class FDSNAvailabilityQueryAuthRealm(object):
-    implements(portal.IRealm)
 
     #--------------------------------------------------------------------------
     def __init__(self, access, userdb):
@@ -975,7 +983,7 @@ class FDSNAvailabilityQuery(_Availability):
                 if line[0] is not ext:
                     if ext is not None:
                         wid = ext.waveformID()
-                        for sr, sg in segGroups.iteritems():
+                        for sr, sg in segGroups.items():
                             if req._disconnected:
                                 return False
                             if byteCount == 0:
@@ -998,7 +1006,7 @@ class FDSNAvailabilityQuery(_Availability):
                             byteCount += writeSegments(sg.segments)
 
                     ext = line[0]
-                    segGroups = {}
+                    segGroups = OrderedDict()
                     segGroups[s.sampleRate()] = SegGroup([s], s.updated())
                 else:
                     if s.sampleRate() in segGroups:
@@ -1012,7 +1020,8 @@ class FDSNAvailabilityQuery(_Availability):
             # handle last extent
             if ext is not None:
                 wid = ext.waveformID()
-                for sr, sg in segGroups.iteritems():
+                for sr, sg in segGroups.items():
+
                     if req._disconnected:
                         return False
                     if byteCount == 0:
@@ -1048,7 +1057,7 @@ class FDSNAvailabilityQuery(_Availability):
                 if line[0] is not ext:
                     if ext is not None:
                         wid = ext.waveformID()
-                        for q, sg in segGroups.iteritems():
+                        for q, sg in segGroups.items():
                             if req._disconnected:
                                 return False
                             if byteCount == 0:
@@ -1071,7 +1080,7 @@ class FDSNAvailabilityQuery(_Availability):
                             byteCount += writeSegments(sg.segments)
 
                     ext = line[0]
-                    segGroups = {}
+                    segGroups = OrderedDict()
                     segGroups[s.quality()] = SegGroup([s], s.updated())
                 else:
                     if s.quality() in segGroups:
@@ -1085,7 +1094,7 @@ class FDSNAvailabilityQuery(_Availability):
             # handle last extent
             if ext is not None:
                 wid = ext.waveformID()
-                for q, sg in segGroups.iteritems():
+                for q, sg in segGroups.items():
                     if req._disconnected:
                         return False
                     if byteCount == 0:
@@ -1121,7 +1130,7 @@ class FDSNAvailabilityQuery(_Availability):
                 if line[0] is not ext:
                     if ext is not None:
                         wid = ext.waveformID()
-                        for (q, sr), sg in segGroups.iteritems():
+                        for (q, sr), sg in segGroups.items():
                             if req._disconnected:
                                 return False
                             if byteCount == 0:
@@ -1145,7 +1154,7 @@ class FDSNAvailabilityQuery(_Availability):
                             byteCount += writeSegments(sg.segments)
 
                     ext = line[0]
-                    segGroups = {}
+                    segGroups = OrderedDict()
                     segGroups[(s.quality(), s.sampleRate())] = \
                         SegGroup([s], s.updated())
                 else:
@@ -1161,7 +1170,7 @@ class FDSNAvailabilityQuery(_Availability):
             # handle last extent
             if ext is not None:
                 wid = ext.waveformID()
-                for (q, sr), sg in segGroups.iteritems():
+                for (q, sr), sg in segGroups.items():
                     if req._disconnected:
                         return False
                     if byteCount == 0:
@@ -1242,18 +1251,13 @@ class FDSNAvailabilityQuery(_Availability):
                   'Rejected extents: {{{0}}}. This limitation may be ' \
                   'resolved in a future version of this webservice.' \
                   .format(extents)
-            data = self.renderErrorPage(req, http.REQUEST_ENTITY_TOO_LARGE,
-                                        msg, ro)
-            if data:
-                utils.writeTS(req, data)
+            self.writeErrorPage(req, http.REQUEST_ENTITY_TOO_LARGE, msg, ro)
             return False
         elif len(idList) > 0:
             parentOIDs.append(idList)
         else:
             msg = "no matching availabilty information found"
-            data = self.renderErrorPage(req, http.NO_CONTENT, msg, ro)
-            if data:
-                utils.writeTS(req, data)
+            self.writeErrorPage(req, http.NO_CONTENT, msg, ro)
             return False
 
         db = IO.DatabaseInterface.Open(Application.Instance().databaseURI())
@@ -1268,9 +1272,7 @@ class FDSNAvailabilityQuery(_Availability):
         # Return 204 if no matching availability information was found
         if segCount <= 0:
             msg = "no matching availabilty information found"
-            data = self.renderErrorPage(req, http.NO_CONTENT, msg, ro)
-            if data:
-                utils.writeTS(req, data)
+            self.writeErrorPage(req, http.NO_CONTENT, msg, ro)
             return True
 
         Logging.debug("%s: returned %i segments (total bytes: %i)" % (
@@ -1290,7 +1292,7 @@ class FDSNAvailabilityQuery(_Availability):
 
         for idList in parentOIDs:
             if req._disconnected:
-                raise StopIteration
+                raise StopIteration()
 
             # build SQL query
             q = 'SELECT * from DataSegment ' \
@@ -1323,7 +1325,7 @@ class FDSNAvailabilityQuery(_Availability):
 
             segIt = dba.getObjectIterator(q, DataModel.DataSegment.TypeInfo())
             if segIt is None or not segIt.valid():
-                raise StopIteration
+                raise StopIteration()
 
             # Iterate and optionally merge segments.
             # A segment will be yielded if
@@ -1366,8 +1368,8 @@ class FDSNAvailabilityQuery(_Availability):
                     (ro.mergeSampleRate or
                      s.sampleRate() == seg.sampleRate()) and \
                     ((ro.mergeGaps is None and diff <= jitter) or \
-                     (diff <= ro.mergeGaps)) and \
-                    (-diff <= jitter or ro.mergeOverap):
+                     (ro.mergeGaps is not None and diff <= ro.mergeGaps)) and \
+                    (-diff <= jitter or ro.mergeOverlap):
 
                     seg.setEnd(s.end())
                     if s.updated() > seg.updated():
@@ -1386,7 +1388,7 @@ class FDSNAvailabilityQuery(_Availability):
 
             # close database iterator if iteration was stopped because of 
             # row limit
-            raise StopIteration
+            raise StopIteration()
 
 
 # vim: ts=4 et tw=79

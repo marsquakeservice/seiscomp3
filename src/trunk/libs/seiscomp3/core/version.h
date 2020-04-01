@@ -40,9 +40,34 @@ namespace Core {
  ******************************************************************************
  "13.0.0"   0x0D0000
    - Added virtual Seiscomp::IO::Database::escape
+   - Renamed Seiscomp::Array::bytes() to elementSize()
+   - Added enums ZEP and REP to Seiscomp::Core::GreensfunctionComponent
+   - Added Seiscomp::DataModel::touch(obj)
+   - Changed database oid type to 64bit
+   - Added Record::authentication and Record::authority
+   - Seiscomp::Gui::Application does not inherit from QApplication anymore
+   - Added Seiscomp::Gui::Map::Symbol::layerVisibilityChanged
+   - Added Seiscomp::Gui::Map::Layer::setToolTip
+   - Added Seiscomp::Gui::Map::Layer::toolTip
+   - Added Seiscomp::Gui::Map::Layer::hasCursorShape
+   - Added Seiscomp::Gui::Map::Layer::cursorShape
+   - Added Seiscomp::Gui::Map::Layer::setCursorShape
+   - Added Seiscomp::Gui::Map::Layer::unsetCursorShape
+   - Added Seiscomp::Gui::Map::Layer::update
+   - Added Seiscomp::Gui::Axis::ticks
+   - Added Seiscomp::Gui::Axis::subTicks
+   - Declared Seiscomp::Gui::Axis::updateLayout, sizeHint, draw and drawGrid virtual
+   - Declared Seiscomp::Gui::Graph::unproject virtual
+
+ "12.3.0"   0x0C0300
+   - Added ArtificialEventParametersMessage
 
  "12.2.0"   0x0C0200
-   - Added ArtificialEventParametersMessage
+   - Added Application::waitEvent
+
+ "12.1.1"   0x0C0101
+   - Fixed RecordWidget::mouseMoveEvent to not ignore handled events
+   - Fixed libtau wrapper setModel initialization bug
 
  "12.1.0"   0x0C0100
    - Fixed RecordWidget emitting of traceUpdated signal if the record slot to

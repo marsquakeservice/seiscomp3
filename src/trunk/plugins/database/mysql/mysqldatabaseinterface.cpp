@@ -23,6 +23,10 @@
 #include <mysql/errmsg.h>
 #endif
 
+#if LIBMYSQL_VERSION_ID >= 80000
+typedef bool my_bool;
+#endif
+
 
 namespace Seiscomp {
 namespace Database {
@@ -76,8 +80,8 @@ bool MySQLDatabase::open() {
 	if ( _handle == NULL )
 		return false;
 
-	my_bool reconnect = true;
-	mysql_options(_handle, MYSQL_OPT_RECONNECT, (const char*)&reconnect);
+	my_bool reconnectFlag = true;
+	mysql_options(_handle, MYSQL_OPT_RECONNECT, (const char*)&reconnectFlag);
 
 	if ( _timeout > 0 ) {
 		SEISCOMP_INFO("Apply database read timeout of %d seconds", _timeout);
@@ -107,7 +111,7 @@ bool MySQLDatabase::open() {
 	// Regarding some newsgroup results it is better to set the option AFTER
 	// the connection has been established even though the documentation says
 	// to do it BEFORE connecting
-	mysql_options(_handle, MYSQL_OPT_RECONNECT, (const char*)&reconnect);
+	mysql_options(_handle, MYSQL_OPT_RECONNECT, (const char*)&reconnectFlag);
 
 	return true;
 }
@@ -329,8 +333,9 @@ void MySQLDatabase::endQuery() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-unsigned long MySQLDatabase::lastInsertId(const char*) {
-	return (unsigned long)mysql_insert_id(_handle);
+IO::DatabaseInterface::OID MySQLDatabase::lastInsertId(const char*) {
+	my_ulonglong id = mysql_insert_id(_handle);
+	return id == 0 ? IO::DatabaseInterface::INVALID_OID : id;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

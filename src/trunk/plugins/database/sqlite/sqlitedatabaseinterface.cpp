@@ -199,8 +199,9 @@ const char* SQLiteDatabase::defaultValue() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-unsigned long SQLiteDatabase::lastInsertId(const char*) {
-	return (unsigned long)sqlite3_last_insert_rowid(_handle);
+IO::DatabaseInterface::OID SQLiteDatabase::lastInsertId(const char*) {
+	sqlite3_int64 id = sqlite3_last_insert_rowid(_handle);
+	return id <= 0 ? IO::DatabaseInterface::INVALID_OID : id;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -290,7 +291,7 @@ bool SQLiteDatabase::escape(std::string &out, const std::string &in) {
 		switch ( *in_buf ) {
 			case '\'':
 				out_buf[j++] = '\'';
-				out_buf[j++]   = '\'';
+				out_buf[j++] = '\'';
 				break;
 			default:
 				out_buf[j++] = *in_buf;
@@ -300,7 +301,7 @@ bool SQLiteDatabase::escape(std::string &out, const std::string &in) {
 
 	out_buf[j] = '\0';
 	out.resize(j);
-	return j;
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
