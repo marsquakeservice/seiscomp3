@@ -7,24 +7,24 @@
 # Email:   herrnkind@gempa.de
 ################################################################################
 
+from __future__ import absolute_import, division, print_function
+
+import base64
+import datetime
+import hashlib
+import json
+import os
+import random
+import sys
+import time
+
 from twisted.web import http, resource, server, static, util
 
 from seiscomp3 import Core, Logging
 
-import utils
-import json
-import gnupg
-import base64
-import hashlib
-import random
-import os
-import time
-import datetime
-import sys
-try:
-    import dateutil.parser
-except ImportError, e:
-    sys.exit("%s\nIs python-dateutil installed?" % str(e))
+from . import gnupg
+from .utils import accessLog, b_str, u_str, py3ustr, py3bstr, \
+                   writeTS, writeTSBin
 
 VERSION = "1.2.4"
 
@@ -36,7 +36,7 @@ class HTTP:
     #---------------------------------------------------------------------------
     @staticmethod
     def renderErrorPage(request, code, msg, version=VERSION, ro=None):
-        resp = """\
+        resp = b"""\
 Error %i: %s
 
 %s
@@ -64,21 +64,21 @@ Service Version:
 
         # status code 204 requires no message body
         if code == http.NO_CONTENT:
-            response = ""
+            response = b""
         else:
             request.setHeader('Content-Type', 'text/plain')
 
-            reference = "%s/" % (request.path.rpartition('/')[0])
+            reference = b"%s/" % request.path.rpartition(b'/')[0]
 
             codeStr = http.RESPONSES[code]
-            date = Core.Time.GMT().toString("%FT%T.%f")
-            response = resp % (code, codeStr, msg, reference, request.uri, date,
-                               version)
+            date = py3bstr(Core.Time.GMT().toString("%FT%T.%f"))
+            response = resp % (code, codeStr, py3bstr(msg), reference,
+                               request.uri, date, py3bstr(version))
             if not noContent:
                 Logging.warning("responding with error: %i (%s)" % (
-                                code, codeStr))
+                                code, py3ustr(codeStr)))
 
-        utils.accessLog(request, ro, code, len(response), msg)
+        accessLog(request, ro, code, len(response), msg)
         return response
 
     #---------------------------------------------------------------------------
@@ -95,10 +95,12 @@ class ServiceVersion(resource.Resource):
     #---------------------------------------------------------------------------
     def __init__(self, version):
         self.version = version
+        self.type = 'text/plain'
 
     #---------------------------------------------------------------------------
     def render(self, request):
-        return self.version
+        request.setHeader('content-type', 'text/plain')
+        return py3bstr(self.version)
 
 
 ################################################################################
@@ -116,7 +118,7 @@ class WADLFilter(static.Data):
             if valid:
                 data.append(line)
 
-        static.Data.__init__(self, "\n".join(data), "application/xml")
+        static.Data.__init__(self, py3bstr("\n".join(data)), 'application/xml')
 
 
 ################################################################################
@@ -132,17 +134,21 @@ class BaseResource(resource.Resource):
         return HTTP.renderErrorPage(request, code, msg, self.version, ro)
 
     #---------------------------------------------------------------------------
+    def writeErrorPage(self, request, code, msg, ro=None):
+        data = self.renderErrorPage(request, code, msg, ro)
+        if data:
+            writeTSBin(request, data)
+
+    #---------------------------------------------------------------------------
     # Renders error page if the result set exceeds the configured maximum number
     # objects
-    def checkObjects(self, req, objCount, maxObj):
+    def checkObjects(self, request, objCount, maxObj):
         if objCount <= maxObj:
             return True
 
         msg = "The result set of your request exceeds the configured maximum " \
               "number of objects (%i). Refine your request parameters." % maxObj
-        version = self.version
-        utils.writeTS(req, HTTP.renderErrorPage(
-                      req, http.REQUEST_ENTITY_TOO_LARGE, msg, version))
+        self.writeErrorPage(request, http.REQUEST_ENTITY_TOO_LARGE, msg)
         return False
 
 
@@ -166,7 +172,7 @@ class NoResource(BaseResource):
 ################################################################################
 class ListingResource(BaseResource):
 
-    html = """<!doctype html>
+    html = u"""<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -188,18 +194,18 @@ class ListingResource(BaseResource):
 
     #---------------------------------------------------------------------------
     def render(self, request):
-        lis = ""
-        if request.path[-1:] != '/':
-            return util.redirectTo(request.path + '/', request)
+        lis = u""
+        if request.path[-1:] != b'/':
+            return util.redirectTo(request.path + b'/', request)
 
-        for child in self.children.items():
-            if child[1].isLeaf:
+        for k, v in self.children.items():
+            if v.isLeaf:
                 continue
-            if hasattr(child[1], 'hideInListing') and child[1].hideInListing:
+            if hasattr(v, 'hideInListing') and v.hideInListing:
                 continue
-            name = child[0]
-            lis += """<li><a href="%s/">%s/</a></li>\n""" % (name, name)
-        return ListingResource.html % (request.path, lis)
+            name = u_str(k)
+            lis += u'<li><a href="{}/">{}/</a></li>\n'.format(name, name)
+        return b_str(ListingResource.html % (u_str(request.path), lis))
 
     #---------------------------------------------------------------------------
     def getChild(self, chnam, request):
@@ -219,8 +225,8 @@ class DirectoryResource(static.File):
 
     #---------------------------------------------------------------------------
     def render(self, request):
-        if request.path[-1:] != '/':
-            return util.redirectTo(request.path + '/', request)
+        if request.path[-1:] != b'/':
+            return util.redirectTo(request.path + b'/', request)
         return static.File.render(self, request)
 
     #---------------------------------------------------------------------------
@@ -246,12 +252,12 @@ class AuthResource(BaseResource):
         try:
             verified = self.__gpg.decrypt(request.content.getvalue())
 
-        except OSError, e:
+        except OSError as e:
             msg = "gpg decrypt error"
             Logging.warning("%s: %s" % (msg, str(e)))
             return self.renderErrorPage(request, http.INTERNAL_SERVER_ERROR, msg)
 
-        except Exception, e:
+        except Exception as e:
             msg = "invalid token"
             Logging.warning("%s: %s" % (msg, str(e)))
             return self.renderErrorPage(request, http.BAD_REQUEST, msg)
@@ -267,7 +273,7 @@ class AuthResource(BaseResource):
                 datetime.datetime.now(dateutil.tz.tzutc())
             lifetime = td.seconds + td.days * 24 * 3600
 
-        except Exception, e:
+        except Exception as e:
             msg = "token has invalid validity"
             Logging.warning("%s: %s" % (msg, str(e)))
             return self.renderErrorPage(request, http.BAD_REQUEST, msg)
@@ -288,16 +294,43 @@ class AuthResource(BaseResource):
 
 ################################################################################
 class Site(server.Site):
+    def __init__(self, resource, corsOrigins):
+        server.Site.__init__(self, resource)
+        self._corsOrigins = corsOrigins
 
     #---------------------------------------------------------------------------
     def getResourceFor(self, request):
         Logging.debug("request (%s): %s" % (request.getClientIP(),
-                                            request.uri))
-        request.setHeader('Server', "SeisComP3-FDSNWS/%s" % VERSION)
-        request.setHeader('Access-Control-Allow-Origin', '*')
+                                            py3ustr(request.uri)))
+        request.setHeader('Server', 'SeisComP3-FDSNWS/%s' % VERSION)
         request.setHeader('Access-Control-Allow-Headers', 'Authorization')
         request.setHeader('Access-Control-Expose-Headers', 'WWW-Authenticate')
+
+        self.setAllowOrigin(request)
+
         return server.Site.getResourceFor(self, request)
+
+    #---------------------------------------------------------------------------
+    def setAllowOrigin(self, req):
+        # no allowed origin: no response header
+        lenOrigins = len(self._corsOrigins)
+        if lenOrigins == 0:
+            return
+
+        # one origin: add header
+        if lenOrigins == 1:
+            req.setHeader('Access-Control-Allow-Origin', self._corsOrigins[0])
+            return
+
+        # more than one origin: check current origin against allowed origins
+        # and return the current origin on match.
+        origin = req.getHeader('Origin')
+        if origin in self._corsOrigins:
+            req.setHeader('Access-Control-Allow-Origin', origin)
+
+            # Set Vary header to let the browser know that the response depends
+            # on the request. Certain cache strategies should be disabled.
+            req.setHeader('Vary', 'Origin')
 
 
 # vim: ts=4 et

@@ -700,8 +700,9 @@ void EventTool::handleTimeout() {
 		OriginPtr org = Origin::Cast(it->obj);
 		EventInformationPtr info;
 		if ( org ) {
-			SEISCOMP_LOG(_infoChannel, "Processing delayed origin %s",
-			             org->publicID().c_str());
+			SEISCOMP_LOG(_infoChannel, "Processing delayed origin %s (no event "
+			             "creation before %i s)", org->publicID().c_str(),
+			             it->timeout + DELAY_CHECK_INTERVAL);
 			info = associateOrigin(org.get(), false);
 		}
 		else {
@@ -978,6 +979,8 @@ void EventTool::updateObject(const std::string &parentID, Object* object) {
 	OriginPtr org = Origin::Cast(object);
 	if ( org ) {
 		logObject(_inputOrigin, Core::Time::GMT());
+		if ( !org->registered() )
+			org = Origin::Find(org->publicID());
 		_updates.insert(TodoEntry(org));
 		_realUpdates.insert(TodoEntry(org));
 		SEISCOMP_DEBUG("* queued updated origin %s (%d/%lu)",
@@ -990,6 +993,8 @@ void EventTool::updateObject(const std::string &parentID, Object* object) {
 	FocalMechanismPtr fm = FocalMechanism::Cast(object);
 	if ( fm ) {
 		logObject(_inputFocalMechanism, Core::Time::GMT());
+		if ( !fm->registered() )
+			fm = FocalMechanism::Find(fm->publicID());
 		_updates.insert(TodoEntry(fm));
 		_realUpdates.insert(TodoEntry(fm));
 		SEISCOMP_DEBUG("* queued updated focalmechanism %s",
@@ -1001,6 +1006,8 @@ void EventTool::updateObject(const std::string &parentID, Object* object) {
 	MagnitudePtr mag = Magnitude::Cast(object);
 	if ( mag ) {
 		logObject(_inputMagnitude, Core::Time::GMT());
+		if ( !mag->registered() )
+			mag = Magnitude::Find(mag->publicID());
 		SEISCOMP_LOG(_infoChannel, "Received updated magnitude %s (%s %.2f)",
 		             mag->publicID().c_str(), mag->type().c_str(), mag->magnitude().value());
 		org = _cache.get<Origin>(parentID);
@@ -1012,6 +1019,8 @@ void EventTool::updateObject(const std::string &parentID, Object* object) {
 	EventPtr evt = Event::Cast(object);
 	if ( evt ) {
 		logObject(_inputEvent, Core::Time::GMT());
+		if ( !evt->registered() )
+			evt = Event::Find(evt->publicID());
 		SEISCOMP_LOG(_infoChannel, "Received updated event %s", evt->publicID().c_str());
 		EventInformationPtr info = cachedEvent(evt->publicID());
 		if ( !info ) {
@@ -1742,7 +1751,8 @@ EventInformationPtr EventTool::associateOriginCheckDelay(DataModel::Origin *orig
 		}
 
 		// Filter to delay the origin passes
-		SEISCOMP_LOG(_infoChannel, "Origin %s delayed", origin->publicID().c_str());
+		SEISCOMP_LOG(_infoChannel, "Origin %s delayed for %i s",
+		             origin->publicID().c_str(), _config.delayTimeSpan);
 		_delayBuffer.push_back(DelayedObject(origin, _config.delayTimeSpan));
 
 		return NULL;

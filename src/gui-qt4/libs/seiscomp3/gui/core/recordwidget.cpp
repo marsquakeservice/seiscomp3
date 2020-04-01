@@ -12,6 +12,7 @@
 
 
 #include <QPainter>
+#include <QToolTip>
 
 #define SEISCOMP_COMPONENT Gui::RecordWidget
 #include <seiscomp3/core/genericrecord.h>
@@ -859,6 +860,7 @@ void RecordWidget::init() {
 	_markerSourceWidget = NULL;
 	_filtering = false;
 	_drawMode = Single;
+	_recordBorderDrawMode = SCScheme.records.recordBorders.drawMode;
 	_clipRows = true;
 	_drawOffset = true;
 	_drawRecordID = true;
@@ -898,6 +900,7 @@ void RecordWidget::init() {
 
 	_drawRecords = false;
 	_showAllRecords = false;
+	_showRecordBorders = false;
 	_showScaledValues = false;
 	_autoMaxScale = false;
 	_useGlobalOffset = false;
@@ -2583,14 +2586,15 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 	painter.setClipRect(rect);
 	painter.translate(_canvasRect.left(), _canvasRect.top());
 
-	if ( hasFocus() ) {
-		bg = blend(bg, palette().color(QPalette::Highlight), 90);
-		painter.fillRect(rect, bg);
-	}
-
 	int sel_xmin = int((_smin-_tmin)*_pixelPerSecond),
-	    sel_xmax = int((_smax-_tmin)*_pixelPerSecond),
-	    sel_w = sel_xmax - sel_xmin;
+	    sel_xmax = int((_smax-_tmin)*_pixelPerSecond);
+
+	if ( sel_xmin < 0 ) sel_xmin = 0;
+	if ( sel_xmin > _canvasRect.width() ) sel_xmin = _canvasRect.width();
+	if ( sel_xmax < 0 ) sel_xmax = 0;
+	if ( sel_xmax > _canvasRect.width() ) sel_xmax = _canvasRect.width();
+
+	int sel_w = sel_xmax - sel_xmin;
 
 	bool emitUpdated = false;
 
@@ -3056,7 +3060,9 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 						}
 						else
 							painter.setPen(offsetColor);
-						painter.drawLine(0,_tracePaintOffset+stream->traces[frontIndex].poly->baseline(), _canvasRect.width(),_tracePaintOffset+stream->traces[frontIndex].poly->baseline());
+
+						painter.drawLine(0,_tracePaintOffset+stream->traces[frontIndex].poly->baseline(),
+						                 _canvasRect.width(),_tracePaintOffset+stream->traces[frontIndex].poly->baseline());
 					}
 
 					if ( stream->antialiasing != isAntialiasing )
@@ -3065,10 +3071,10 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 					int hMargin = stream->pen.width()-1;
 					if ( hMargin < 0 ) hMargin = 0;
 
-					painter.setPen(_enabled?stream->pen:fg);
-					painter.translate(QPoint(x_tmin[frontIndex], _tracePaintOffset+hMargin));
-					stream->traces[frontIndex].poly->draw(painter);
-					painter.translate(QPoint(-x_tmin[frontIndex], -_tracePaintOffset-hMargin));
+					drawTrace(painter, &stream->traces[frontIndex],
+					          stream->records[frontIndex],
+					          QPen(_enabled?stream->pen:fg),
+					          QPoint(x_tmin[frontIndex], _tracePaintOffset+hMargin));
 				}
 			}
 			break;
@@ -3138,10 +3144,10 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 					int hMargin = stream->pen.width()-1;
 					if ( hMargin < 0 ) hMargin = 0;
 
-					painter.setPen(_enabled?stream->pen:fg);
-					painter.translate(QPoint(x_tmin[frontIndex], _tracePaintOffset + stream->posY + hMargin));
-					stream->traces[frontIndex].poly->draw(painter);
-					painter.translate(QPoint(-x_tmin[frontIndex], -_tracePaintOffset - stream->posY - hMargin));
+					drawTrace(painter, &stream->traces[frontIndex],
+					          stream->records[frontIndex],
+					          QPen(_enabled?stream->pen:fg),
+					          QPoint(x_tmin[frontIndex], _tracePaintOffset + stream->posY + hMargin));
 				}
 			}
 			break;
@@ -3232,10 +3238,10 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 					int hMargin = stream->pen.width()-1;
 					if ( hMargin < 0 ) hMargin = 0;
 
-					painter.setPen(_enabled?stream->pen:fg);
-					painter.translate(QPoint(x_tmin[frontIndex], _tracePaintOffset + hMargin));
-					stream->traces[frontIndex].poly->draw(painter);
-					painter.translate(QPoint(-x_tmin[frontIndex], -_tracePaintOffset - hMargin));
+					drawTrace(painter, &stream->traces[frontIndex],
+					          stream->records[frontIndex],
+					          QPen(_enabled?stream->pen:fg),
+					          QPoint(x_tmin[frontIndex], _tracePaintOffset + hMargin));
 				}
 			}
 			break;
@@ -3282,6 +3288,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 		if ( m->isMoveCopyEnabled() ) {
 			x = mapTime(m->time());
+			x -= _canvasRect.left();
 
 			QColor c(enabled?m->color():fg);
 			c.setAlpha(64);
@@ -3698,7 +3705,8 @@ void RecordWidget::mouseMoveEvent(QMouseEvent *event) {
 					emit selectedTimeRangeChanged(_cursorPos, _startDragPos);
 			}
 		}
-		event->ignore();
+		else
+			event->ignore();
 	}
 
 	/*
@@ -4380,8 +4388,9 @@ RecordMarker *RecordWidget::takeMarker(int pos) {
 
 	if ( pos >= 0 ) {
 		RecordMarker *m = _marker[pos];
-		if ( m == _activeMarker )
-			_activeMarker = NULL;
+		if ( m == _activeMarker ) {
+			setCurrentMarker(NULL);
+		}
 		if ( m == _hoveredMarker )
 			_hoveredMarker = NULL;
 		m->setParent(NULL);
@@ -4858,6 +4867,122 @@ void RecordWidget::setData(const QVariant& data) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QVariant RecordWidget::data() const {
 	return _data;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void RecordWidget::drawTrace(QPainter &painter, Trace *trace,
+                             RecordSequence *seq, const QPen &pen,
+                             const QPoint &paintOffset) {
+	painter.setPen(pen);
+	painter.translate(paintOffset);
+	trace->poly->draw(painter);
+
+	drawRecordBorders(painter, seq);
+
+	painter.translate(paintOffset * -1);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void RecordWidget::drawRecordBorders(QPainter &painter, RecordSequence *seq) {
+	if ( !_showRecordBorders ) return;
+
+	painter.setRenderHint(QPainter::Antialiasing, false);
+
+	int height = fontMetrics().height() / 3;
+	Core::Time start = leftTime(),
+	           end = rightTime();
+
+	for ( RecordSequence::const_iterator it = seq->begin();
+	      it != seq->end(); ++it ) {
+		const Record *rec = it->get();
+
+		// Skip records that are out of time window [start:end]
+		try {
+			if ( rec->endTime() <= start ) continue;
+		}
+		catch ( ... ) { continue; }
+
+		if ( rec->startTime() >= end ) break;
+
+		int nsamp = rec->sampleCount();
+		if ( nsamp == 0 ) continue;
+
+		int xMin = int(-(_tmin + static_cast<double>((_alignment - rec->startTime()))) *_pixelPerSecond);
+		int xMax = int(-(_tmin + static_cast<double>((_alignment - rec->endTime()))) *_pixelPerSecond);
+
+		QPen pen;
+		QBrush brush;
+		if ( rec->authentication() == Record::SIGNATURE_VALIDATED ) {
+			pen = SCScheme.colors.records.borders.signatureValid.pen;
+			brush = SCScheme.colors.records.borders.signatureValid.brush;
+		}
+		else if ( rec->authentication() == Record::SIGNATURE_VALIDATION_FAILED ) {
+			pen = SCScheme.colors.records.borders.signatureInvalid.pen;
+			brush = SCScheme.colors.records.borders.signatureInvalid.brush;
+		}
+		else {
+			pen = SCScheme.colors.records.borders.standard.pen;
+			brush = SCScheme.colors.records.borders.standard.brush;
+		}
+
+		QRect rect;
+		if ( _recordBorderDrawMode == TopLine ) {
+			rect = QRect(xMin, 0 , xMax - xMin, height);
+		}
+		else if ( _recordBorderDrawMode == BottomLine ) {
+			rect = QRect(xMin, this->height() - height - 1, xMax - xMin, height);
+		}
+		else {
+			rect = QRect(xMin, 0 , xMax - xMin, this->height() - 1);
+		}
+
+		painter.setPen(pen);
+		painter.setBrush(brush);
+		painter.drawRect(rect);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void RecordWidget::showRecordBorders(bool enable) {
+	if ( _showRecordBorders == enable ) return;
+
+	_showRecordBorders = enable;
+
+	update();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void RecordWidget::setRecordBorderDrawMode(RecordBorderDrawMode mode) {
+	if ( _recordBorderDrawMode == mode ) return;
+
+	_recordBorderDrawMode = mode;
+
+	update();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+RecordWidget::RecordBorderDrawMode RecordWidget::recordBorderDrawMode() const {
+	return _recordBorderDrawMode;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
