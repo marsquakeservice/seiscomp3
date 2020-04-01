@@ -1,5 +1,162 @@
 # Jakarta
 
+## Release YYYY.ddd
+
+* Ms_20
+
+  * Added new surface waves magnitude Ms_20 according to IASPEI standard
+  * Make Ms_20 parameters configurable
+
+* scrttv
+
+  * Add option `Toggle record borders` which shows/hides the borders of records.
+
+* scesv
+
+  * Added configuration parameter 'recenterMap' to control map centering
+
+* scolv
+
+  * Add event type to left hand summary panel
+
+* scqc
+
+  * Added description of plugin configuration parameters. Default for writing
+    to the database is false.
+  * Added more QC parameters to the documentation
+
+* trunk
+
+  * Added Array.bytes() to Python wrappers (only)
+
+* seedlink
+
+  * Support websocket connections from https://github.com/crotwell/seisplotjs-seedlink
+  * Fix config to properly support multiple sources (plugins) per station
+  * Use unambiguous station ID (net.station)
+
+* fdsnws
+
+  * Fix bug if useArclinkAccess is enabled
+
+* scinv
+
+  * Correct output of associated filenames in case of a conflict
+
+## Release 2018.327 patch18
+
+* system
+
+  * Add dependencies for Debian 9 and Debian 10
+
+* scevent/evrc
+
+  * Do not process delayed objects on update
+  * Add delay time information to the event processing log
+  * The plugin evrc for scevent allows the configuration of event types for
+    events within positive or negative regions
+  * Provide support for reading the event type from BNA file header
+  * Provide support for reading the depth limits from BNA file header
+
+* scqcv
+
+  * Expose more configuration parameters to scconfig
+  * Change the default value of streams.cumulative to false to show
+    only stream configured in streams.codes
+  * Correct some default values of the parameter "parameter"
+
+* scesv
+
+  * Fixed region filter with event list which did not work correctly
+
+* scolv
+
+  * Add option `askForConfirmation` to custom commits to allow
+    inspection of the options to be applied.
+  * Open dialog when a custom commit is activated together with shift key.
+  * Add `visibleMagnitudes` to description
+
+* scconfig
+
+  * Added "Check inventory" button to inventory panel of scconfig
+
+* scsendjournal
+
+  * Added documentation
+
+* screloc
+
+  * Added option --origin-id-suffix to name relocated origins
+    using the original publicID plus the specified suffix
+
+## Release 2018.327 patch17
+
+* fdsnws
+
+  * Implement fdsnws-availability-1.0.0
+  * Add event type filter and text output column
+  * Fix crash if database is not configured correctly
+  * Add tests
+  * Bug fixes
+
+* scolv
+
+  * Enable custom commit profiles to be added as buttons
+  * Allow to select the preferred magnitude prior to committing
+    a solution in the magnitude tab
+  * Fix picker metadata resolver if pick has been made on a single
+    component
+
+* GUI
+
+  * Increase default maximum map tile cache to 128mb
+  * Fix rendering of geofeatures with more than one subfeature
+  * Add lat/lon, depth and magnitude database filter to event list
+  * Add `scheme.precision.magnitude` configuration option
+  * Add support to show record borders in the record widget. The style of the border
+    can be changed with the configuration option `scheme.records.recordBorders.drawMode`
+    whereas the following options are available:
+    * TopLine (default)
+    * BottomLine
+    * Box
+
+    Additionally it is possible to select the pen and brush for the options
+    * `scheme.colors.records.borders.standard`
+    * `scheme.colors.records.borders.signatureValid`
+    * `scheme.colors.records.borders.signatureInvalid`
+
+    For example:
+    ```
+    scheme.colors.records.borders.standard.pen.color = FF0000FF
+    ```
+
+
+* ql2sc
+
+  * Add --ep option and fix ping-pong effect with two cross-connected systems
+
+* system
+
+  * Fix error message on attempt to create existing alias
+
+* scart
+
+  * Add option `--with-filename` which outputs of all accessed archive files
+    after import
+  * Fix crash if a data file is not writable
+
+## Release 2018.327 patch16
+
+* fdsnws
+
+  * Fix regression with respect to event type mapping. An empty event type
+    was mapped to "other event".
+
+* trunk
+
+  * Renamed Array::bytes() -> elementSize()
+  * Added Array.bytes() to Python wrappers (only)
+
 ## Release 2018.327 patch15
 
 * fdsnws
@@ -13,7 +170,7 @@
 
 * seedlink
 
-  * Fix duplicate mapping detection in scream_plugin_ring plugin. Whenever a duplicate stream
+  * Fix duplicate mapping detection in scream\_plugin\_ring plugin. Whenever a duplicate stream
     id was given then it was ignored regardless of the attached sysid.
   * Work around EarthData WNRO bug
 
@@ -28,6 +185,11 @@
   * Fix bug that prevents forwarding updates if the routing must be resolved via the parent object
     which hasn't updated. A workaround is to explicitly specify routing rules on all object levels.
   * Add event attribute synchronization per input host
+
+* scamp
+
+  * Add geomtric\_mean method for combining ML amplitudes measured on both horizontals.
+    This corresponds to averaging the single-component station magnitudes instead of the amplitudes.
 
 * python-apps
 
@@ -121,7 +283,7 @@
 
     * Require valid user if network or station is restricted
     * Stop iteration at network or station level if restricted flag but
-      no user is present 
+      no user is present
 
   * Implement service specific version numbers 
 
@@ -191,7 +353,7 @@
 
 * scquery
 
-  * Add more examples to query events and some statistics from the database 
+  * Add more examples to query events and some statistics from the database
 
 * scmag
 

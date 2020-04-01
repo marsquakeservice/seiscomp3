@@ -26,6 +26,8 @@
 # Email:   herrnkind@gempa.de
 ################################################################################
 
+from __future__ import absolute_import, division, print_function
+
 from twisted.internet.threads import deferToThread
 from twisted.web import http, resource, server
 
@@ -33,9 +35,9 @@ from seiscomp3 import DataModel, Logging
 from seiscomp3.Client import Application
 from seiscomp3.IO import DatabaseInterface, Exporter
 
-from http import BaseResource
-from request import RequestOptions
-import utils
+from .http import BaseResource
+from .request import RequestOptions
+from . import utils
 
 from marsprocessingtools import utils as marsutils
 
@@ -55,7 +57,7 @@ class _EventRequestOptions(RequestOptions):
         	 'csv': 'csv'}
     VText = ['text']
     VOrderBy = ['time', 'time-asc', 'magnitude', 'magnitude-asc']
-    OutputFormats = Exporters.keys() + VText
+    OutputFormats = list(Exporters) + VText
 
     PMinDepth = ['mindepth']
     PMaxDepth = ['maxdepth']
@@ -166,8 +168,8 @@ class _EventRequestOptions(RequestOptions):
         d.min = self.parseFloat(self.PMinDepth)
         d.max = self.parseFloat(self.PMaxDepth)
         if d.min is not None and d.max is not None and d.min > d.max:
-            raise ValueError, "%s exceeds %s" % (
-                              self.PMinDepth[0], self.PMaxDepth[0])
+            raise ValueError("%s exceeds %s" % (
+                              self.PMinDepth[0], self.PMaxDepth[0]))
         if d.min is not None or d.max:
             self.depth = d
 
@@ -176,8 +178,8 @@ class _EventRequestOptions(RequestOptions):
         m.min = self.parseFloat(self.PMinMag)
         m.max = self.parseFloat(self.PMaxMag)
         if m.min is not None and m.max is not None and m.min > m.max:
-            raise ValueError, "%s exceeds %s" % (
-                              self.PMinMag[0], self.PMaxMag[0])
+            raise ValueError("%s exceeds %s" % (
+                             self.PMinMag[0], self.PMaxMag[0]))
         key, m.type = self.getFirstValue(self.PMagType)
         if m.min is not None or m.max is not None or m.type is not None:
             self.mag = m
@@ -202,7 +204,8 @@ class _EventRequestOptions(RequestOptions):
                     if sc3Type in self.ExtraEventTypes:
                         self.eventTypes.update(self.ExtraEventTypes[sc3Type])
                 except ValueError:
-                    raise ValueError, "'%s' is not a valid QuakeML event type" % t
+                    raise ValueError("'%s' is not a valid QuakeML event type" \
+                                     % t)
 
         # output components
         self.allOrigins = self.parseBool(self.PAllOrigins)
@@ -245,11 +248,11 @@ class _EventRequestOptions(RequestOptions):
         self.eventIDs = self.getValues(self.PEventID)
         # eventID, MUST NOT be combined with above parameters
         if filterParams and self.eventIDs:
-            raise ValueError, "invalid mixture of parameters, the parameter " \
+            raise ValueError("invalid mixture of parameters, the parameter " \
                 "'%s' may only be combined with: %s, %s, %s, %s, %s" % (
                     self.PEventID[0], self.PAllOrigins[0], self.PAllMags[0],
                     self.PArrivals[0], self.PPicks[0], self.PFM[0],
-                    self.PAllFMs[0], self.PAllMTs[0], self.PComments[0])
+                    self.PAllFMs[0], self.PAllMTs[0], self.PComments[0]))
 
         # format XML
         self.formatted = self.parseBool(self.PFormatted)
@@ -272,8 +275,7 @@ class FDSNEvent(BaseResource):
 
     #---------------------------------------------------------------------------
     def render_OPTIONS(self, req):
-        req.setHeader('Access-Control-Allow-Origin', '*')
-        req.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        req.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
         req.setHeader('Access-Control-Allow-Headers',
                       'Accept, Content-Type, X-Requested-With, Origin')
         req.setHeader('Content-Type', 'text/plain')
@@ -285,7 +287,7 @@ class FDSNEvent(BaseResource):
         ro = _EventRequestOptions(req.args)
         try:
             ro.parse()
-        except ValueError, e:
+        except ValueError as e:
             Logging.warning(str(e))
             return self.renderErrorPage(req, http.BAD_REQUEST, str(e), ro)
 
@@ -318,7 +320,7 @@ class FDSNEvent(BaseResource):
         # Create database query
         db = DatabaseInterface.Open(Application.Instance().databaseURI())
         if db is None:
-            msg = "could not connect to database: %s" % dbq.errorMsg()
+            msg = "could not connect to database"
             return self.renderErrorPage(req, http.SERVICE_UNAVAILABLE, msg, ro)
 
         dbq = DataModel.DatabaseQuery(db)
@@ -344,7 +346,7 @@ class FDSNEvent(BaseResource):
     def _loadComments(self, dbq, obj):
         cnt = dbq.loadComments(obj)
         if self._hideAuthor:
-            for iComment in xrange(cnt):
+            for iComment in range(cnt):
                 self._removeAuthor(obj.comment(iComment))
         return cnt
 
@@ -367,7 +369,7 @@ class FDSNEvent(BaseResource):
             ro.confirmed = False
 
         # add related information
-        for iEvent in xrange(ep.eventCount()):
+        for iEvent in range(ep.eventCount()):
             if req._disconnected:
                 return False
             e = ep.event(iEvent)
@@ -422,7 +424,7 @@ class FDSNEvent(BaseResource):
 
             # focal mechanisms: process before origins to add derived origin to
             # originID list since it may be missing from origin reference list
-            for iFMRef in xrange(e.focalMechanismReferenceCount()):
+            for iFMRef in range(e.focalMechanismReferenceCount()):
                 if req._disconnected:
                     return False
                 fmID = e.focalMechanismReference(iFMRef).focalMechanismID()
@@ -446,7 +448,7 @@ class FDSNEvent(BaseResource):
                 if not self.checkObjects(req, objCount, maxObj):
                     return False
 
-                for iMT in xrange(fm.momentTensorCount()):
+                for iMT in range(fm.momentTensorCount()):
                     mt = fm.momentTensor(iMT)
 
                     originIDs.add(mt.derivedOriginID())
@@ -456,7 +458,7 @@ class FDSNEvent(BaseResource):
                         self._removeAuthor(mt)
 
                     if ro.comments:
-                        for iMT in xrange(fm.momentTensorCount()):
+                        for iMT in range(fm.momentTensorCount()):
                             objCount += self._loadComments(dbq, mt)
 
                     objCount += dbq.loadDataUseds(mt)
@@ -464,7 +466,7 @@ class FDSNEvent(BaseResource):
                     if ro.staMTs:
                         objCount += dbq.loadMomentTensorStationContributions(
                             mt)
-                        for iStaMT in xrange(mt.momentTensorStationContributionCount()):
+                        for iStaMT in range(mt.momentTensorStationContributionCount()):
                             objCount += dbq.load(
                                 mt.momentTensorStationContribution(iStaMT))
 
@@ -482,7 +484,7 @@ class FDSNEvent(BaseResource):
                         originIDs.add(oID)
 
             # origins
-            for oID in originIDs:
+            for oID in sorted(originIDs):
                 if req._disconnected:
                     return False
                 obj = dbq.getObject(DataModel.Origin.TypeInfo(), oID)
@@ -518,7 +520,7 @@ class FDSNEvent(BaseResource):
 
                 objCount += o.magnitudeCount()
                 if ro.comments:
-                    for iMag in xrange(o.magnitudeCount()):
+                    for iMag in range(o.magnitudeCount()):
                         objCount += self._loadComments(dbq, o.magnitude(iMag))
                 if not self.checkObjects(req, objCount, maxObj):
                     return False
@@ -530,12 +532,12 @@ class FDSNEvent(BaseResource):
                 if ro.arrivals:
                     objCount += dbq.loadArrivals(o)
                     if self._removeAuthor:
-                        for iArrival in xrange(o.arrivalCount()):
+                        for iArrival in range(o.arrivalCount()):
                             self._removeAuthor(o.arrival(iArrival))
 
                     # collect pick IDs if requested
                     if ro.picks:
-                        for iArrival in xrange(o.arrivalCount()):
+                        for iArrival in range(o.arrivalCount()):
                             pickIDs.add(o.arrival(iArrival).pickID())
 
                 if not self.checkObjects(req, objCount, maxObj):
@@ -547,7 +549,7 @@ class FDSNEvent(BaseResource):
             if not self.checkObjects(req, objCount, maxObj):
                 return False
 
-            for pickID in pickIDs:
+            for pickID in sorted(pickIDs):
                 obj = dbq.getObject(DataModel.Pick.TypeInfo(), pickID)
                 pick = DataModel.Pick.Cast(obj)
                 if pick is not None:
@@ -572,8 +574,8 @@ class FDSNEvent(BaseResource):
                 full_mars_datamodel=ro.mars, only_confirmed=ro.confirmed))
 
         Logging.debug("%s: returned %i events and %i origins (total "
-                      "objects/bytes: %i/%i)" % (ro.service, ep.eventCount(),
-                                                 ep.originCount(), objCount, sink.written))
+                      "objects/chars: %i/%i)" % (ro.service, ep.eventCount(),
+                      ep.originCount(), objCount, sink.written))
         utils.accessLog(req, ro, http.OK, sink.written, None)
         return True
 
@@ -589,7 +591,7 @@ class FDSNEvent(BaseResource):
         byteCount = len(line)
 
         # add related information
-        for iEvent in xrange(ep.eventCount()):
+        for iEvent in range(ep.eventCount()):
             e = ep.event(iEvent)
             eID = e.publicID()
 
@@ -598,8 +600,8 @@ class FDSNEvent(BaseResource):
                                 e.preferredOriginID())
             o = DataModel.Origin.Cast(obj)
             if o is None:
-                Logging.warning("preferred origin of event '%s' not found: %s" % (
-                                eID, e.preferredOriginID()))
+                Logging.warning("preferred origin of event '%s' not found: "
+                                "%s" % (eID, e.preferredOriginID()))
                 continue
 
             # depth
@@ -643,7 +645,7 @@ class FDSNEvent(BaseResource):
             # event description
             dbq.loadEventDescriptions(e)
             region = ''
-            for i in xrange(e.eventDescriptionCount()):
+            for i in range(e.eventDescriptionCount()):
                 ed = e.eventDescription(i)
                 if ed.type() == DataModel.REGION_NAME:
                     region = ed.text()
@@ -717,9 +719,7 @@ class FDSNEvent(BaseResource):
 
         if ep.eventCount() == 0:
             msg = "no matching events found"
-            data = self.renderErrorPage(req, http.NO_CONTENT, msg, ro)
-            if data:
-                utils.writeTS(req, data)
+            self.writeErrorPage(req, http.NO_CONTENT, msg, ro)
             return True
 
         Logging.debug("events found: %i" % ep.eventCount())

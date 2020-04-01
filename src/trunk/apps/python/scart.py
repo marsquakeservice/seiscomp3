@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 ############################################################################
 #    Copyright (C) by GFZ Potsdam                                          #
@@ -11,12 +12,15 @@
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
 #    SeisComP Public License for more details.                             #
 ############################################################################
+from __future__ import print_function
 
 import glob
 import re
 import time
 import sys
 import os
+if sys.version_info < (2, 4):
+    from sets import Set as set
 import seiscomp3.IO
 import seiscomp3.Logging
 import seiscomp3.Client
@@ -195,7 +199,7 @@ class Archive:
             rs, seiscomp3.Core.Array.INT, seiscomp3.Core.Record.SAVE_RAW)
         # Read only valid records
         while True:
-            rec = ri.next()
+            rec = next(ri)
             if rec is None:
                 break
             if rec.samplingFrequency() <= 0:
@@ -245,6 +249,10 @@ class StreamIterator:
             self.currentEnd = self.record.endTime()
 
     def next(self):
+        # needed for Python 2 only
+        return self.__next__()
+
+    def __next__(self):
         while True:
             self.record, self.index = self.archive.readRecord(
                 self.file, self.index)
@@ -283,6 +291,10 @@ class StreamIterator:
                 return -1
             return 0
 
+    def __lt__(self, other):
+        if self.__cmp__(other) < 0:
+            return True
+        return False
 
 class ArchiveIterator:
     def __init__(self, ar, sortByEndTime):
@@ -307,7 +319,7 @@ class ArchiveIterator:
 
         rec = stream.record
 
-        stream.next()
+        next(stream)
 
         if stream.record is not None:
             # Put the stream back on the right (sorted) position
@@ -317,29 +329,26 @@ class ArchiveIterator:
 
 
 class Copy:
-    def __init__(self, it):
-        self.iterator = it
+    def __init__(self, archiveIterator):
+        self.archiveIterator = archiveIterator
 
     def __iter__(self):
-        for stream in self.iterator.streams:
+        for stream in self.archiveIterator.streams:
             rec = stream.record
             while rec:
                 yield rec
-                rec = stream.next()
-
-        raise StopIteration
+                rec = next(stream)
 
 
 class Sorter:
-    def __init__(self, it):
-        self.iterator = it
+    def __init__(self, archiveIterator):
+        self.archiveIterator = archiveIterator
 
     def __iter__(self):
         while 1:
-            rec = self.iterator.nextSort()
+            rec = self.archiveIterator.nextSort()
             if not rec:
-                raise StopIteration
-
+                return
             yield rec
 
 
@@ -466,6 +475,7 @@ Usage: scart [options] [archive]
 Options:
     --stdout         writes on stdout if import mode is used instead
                      of creating a SDS archive
+    --with-filename  print all accessed files to stdout after import
     -I               specify recordstream URL when in import mode
                      when using another recordstream than file a
                      stream list file is needed
@@ -506,8 +516,8 @@ def usage(exitcode=0):
 
 try:
     opts, files = getopt(sys.argv[1:], "I:dsmEn:c:t:l:hv",
-                         ["stdout", "dump", "list=", "sort", "modify", "speed=", "files=", "verbose", "test", "help"])
-except GetoptError:
+                         ["stdout", "with-filename", "dump", "list=", "sort", "modify", "speed=", "files=", "verbose", "test", "help"])
+except GetoptError as e:
     usage(exitcode=1)
 
 
@@ -517,6 +527,7 @@ sort = False
 modifyTime = False
 dump = False
 listFile = None
+withFilename = False # Whether to output accessed files for import or not
 test = False
 filePoolSize = 100
 # default = stdin
@@ -530,15 +541,19 @@ networks = "*"
 
 archiveDirectory = "./"
 
+
+
 for flag, arg in opts:
     if flag == "-t":
-        tmin, tmax = map(str2time, arg.split("~"))
+        tmin, tmax = list(map(str2time, arg.split("~")))
     elif flag == "-E":
         endtime = True
     elif flag in ["-h", "--help"]:
         usage(exitcode=0)
     elif flag in ["--stdout"]:
         stdout = True
+    elif flag in ["--with-filename"]:
+        withFilename = True
     elif flag in ["-v", "--verbose"]:
         verbose = True
     elif flag in ["-d", "--dump"]:
@@ -601,7 +616,19 @@ if verbose:
     else:
         sys.stderr.write("Mode: IMPORT\n")
 
-it = ArchiveIterator(archive, endtime)
+archiveIterator = ArchiveIterator(archive, endtime)
+
+if dump:
+    stdout = True
+
+if stdout:
+    out = sys.stdout
+    try:
+        # needed in Python 3, fails in Python 2
+        out = out.buffer
+    except AttributeError:
+        # assuming this is Python 2, nothing to be done
+        pass
 
 if dump:
     if listFile:
@@ -610,24 +637,25 @@ if dump:
             if verbose:
                 sys.stderr.write("adding stream: %s.%s.%s.%s\n" % (
                     stream[2], stream[3], stream[4], stream[5]))
-            it.append(stream[0], stream[1], stream[2],
-                      stream[3], stream[4], stream[5])
+            archiveIterator.append(
+                stream[0], stream[1], stream[2],
+                stream[3], stream[4], stream[5])
     else:
         if networks == "*":
-            it.append(tmin, tmax, "*", "*", "*", channels)
+            archiveIterator.append(tmin, tmax, "*", "*", "*", channels)
         else:
             items = networks.split(",")
             for n in items:
                 n = n.strip()
-                it.append(tmin, tmax, n, "*", "*", channels)
+                archiveIterator.append(tmin, tmax, n, "*", "*", channels)
 
     stime = None
     realTime = seiscomp3.Core.Time.GMT()
 
     if sort:
-        records = Sorter(it)
+        records = Sorter(archiveIterator)
     else:
-        records = Copy(it)
+        records = Copy(archiveIterator)
 
     for rec in records:
         # skip corrupt records
@@ -657,11 +685,10 @@ if dump:
 
         if verbose:
             etime = rec.endTime()
-            sys.stderr.write("%s %s %s %s\n" % (rec.streamID(
-            ), seiscomp3.Core.Time.LocalTime().iso(), rec.startTime().iso(), etime.iso()))
+            sys.stderr.write("%s %s %s %s\n" % (rec.streamID(), seiscomp3.Core.Time.LocalTime().iso(), rec.startTime().iso(), etime.iso()))
 
         if test == False:
-            sys.stdout.write(rec.raw().str())
+            out.write(rec.raw().str())
 
 else:
     env = seiscomp3.System.Environment.Instance()
@@ -673,7 +700,7 @@ else:
         for p in plugins:
             registry.addPluginName(p)
         registry.loadPlugins()
-    except Exception, e:
+    except Exception as e:
         pass
 
     rs = seiscomp3.IO.RecordStream.Open(recordURL)
@@ -708,10 +735,11 @@ else:
         rs, seiscomp3.Core.Array.INT, seiscomp3.Core.Record.SAVE_RAW)
     filePool = dict()
     f = None
+    accessedFiles = set()
     try:
         for rec in input:
             if stdout:
-                sys.stdout.write(rec.raw().str())
+                out.write(rec.raw().str())
                 continue
 
             dir, file = archive.location(rec.startTime(), rec.networkCode(
@@ -731,19 +759,27 @@ else:
 
                     try:
                         f = open(archiveDirectory + file, 'ab')
-                    except:
-                        sys.stderr.write("File '%s' could not be opened for writing\n" % (
-                            outputDirectory + file))
+                    except Exception as ex:
+                        sys.stderr.write("Error: %s\n" % (ex))
                         sys.exit(-1)
 
                     # Remove old handles
                     if len(filePool) < filePoolSize:
                         filePool[file] = f
 
+                if withFilename:
+                    accessedFiles.add(file)
                 f.write(rec.raw().str())
+            else:
+                if withFilename:
+                    accessedFiles.add(file)
 
             if verbose:
                 sys.stderr.write("%s %s %s\n" %
                                  (rec.streamID(), rec.startTime().iso(), file))
-    except Exception, e:
+    except Exception as e:
         sys.stderr.write("Exception: %s\n" % str(e))
+
+    if withFilename:
+        for filename in accessedFiles:
+            print(filename)
